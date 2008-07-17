@@ -1,0 +1,104 @@
+%define=bluebox apply=block bgcolor=#eeffee border="1px solid blue" padding=4px%%define=h2 apply=block border-bottom="3px double blue" color=darkblue%%define=h3 apply=block border-bottom="1px solid blue" color=darkblue%%define=h4 apply=block border-bottom="1px dotted blue" color=darkblue%%define=py apply=block color=navy font-style=italic%(:title pmgallery:)
+>>recipeinfo bluebox<<
+Summary: Display your Picasa albums and pictures within PmWiki.
+Version: Alpha -- 0.1 (14-Jul-2008)
+Prerequisites: PHP5
+Maintainer: [[~DaveG]]
+Categories: [[!Images]], [[!Gallery]]
+Discussion: [[{$Name}-Talk]]
+Download: [[(Attach:)pmgallery.zip]]
+>><<
+[[#intro]]
+!! Summary %h2%
+pmGallery automatically generates 
+
+!!! Table of contents %h3%
+(:div style="font-size:.85em; padding:0;":)
+* [[#intro|Questions answered by this recipe]] |
+  [[#description|Description]] |
+  '''[[#examples|Examples]]''' |
+  [[#installation|Installation]]
+* '''[[#basic-usage|Basic usage]]''' |
+  [[#basic-tl|Thumblist]] |
+  [[#singlethumb|Single thumbnail]]
+(:divend:)
+
+!! [[#description]] Description %h2%
+(:Description Uses a PmWiki markup to embed Picasa albums and images on a PmWiki page. Provides integration with [[Cookbook/Galleria]].:){$Description}
+
+Features:
+* 
+
+!! Being used at...[[#examples]]%h2%
+
+!! Installation [[#installation]]%h2%
+To install a new version:
+* Extract the files and directories in [[(Attach:)pmgallery.zip]] into your cookbook directory. Everything should be inside a folder [=cookbook/pmgallery=].
+* Add this line to your config.php:\\
+  @@[=include_once("$FarmD/cookbook/pmgallery/pmgallery.php");=]@@
+
+!! Basic usage %h2%[[#basic-usage]]
+
+
+
+!! Advanced users %h2%[[#advanced]]
+'-''For PmWiki versions older than 2.1.27 use [="{$FullName}" instead of "{*$FullName}"=].''-'
+
+From version 2008-02-08 on, it is possible to manually select another ImageTemplate page in each gallery page. To do this, add in the wiki page containing the thumblist, a new PageTextVariable called "ImageTemplate":
+ [@(:Image@][@Template:SomePage:)@]
+ [@(:thumblist usetemplate=1 [...]:)@]
+where SomePage (or OtherGroup.SomePage) is your ImageTemplate. [[ http://galleries.accent.bg/Thumblist2/Sandbox7 | Demo]].
+
+[[#pagevariables]]
+In the template there are some new [[(PmWiki.)page variables]]:
+* @@[={*$UpFile}=]@@ = the file name, ex. @@my_picture.jpg@@
+* @@[={*$UpDir}=]@@ = the wiki page to which the image was uploaded, ex. @@Group.Page@@ (may be different from the current page @@[={*$FullName}=]@@)
+* @@[={*$UpDirUpFile}=]@@ = a string like @@Group.Page/my_picture.jpg@@, easy to use in Attach:.
+* (for advanced users) @@[={*$UpFilePage}=]@@ = a virtual page name for single picture comments (the filename capitalized and only with allowed pagename characters), ex. @@Mypicturejpg@@. You can use this to set some individual file comment or description possibility, using other recipes ([[PmForm]], [[Fox]], [[AddDeleteLine2]], etc.). For example:\\
+  @@[=(:include FileComments/{*$UpFilePage}:)=]@@ or @@[=(:include {*$UpFilePage}-comments:)=]@@
+* @@[={*$PrevLink}=]@@ and @@[={*$NextLink}=]@@ - links to previous and next image in the current gallery (empty if no prev/next). See [[http://galleries.accent.bg/Thumblist2/TemplateTrails|an example]].
+* @@[={*$PrevThumb}=]@@ and @@[={*$NextThumb}=]@@ - thumbnail links to previous and next image in the current gallery (empty if no prev/next). See [[http://galleries.accent.bg/Thumblist2/Sandbox5?action=imgtpl&G=1&updir=Thumblist2.Thumblist2&upname=Athens2.jpg|an example]].
+* All available [[#questionvars|question-variables]] (except [=?n, ?N, ?u, ?U=]) are transposed into page variables and can be used in the template like this:
+** @@[=?h={*$ThumbList_h}=]@@,
+** @@[=?w={*$ThumbList_w}=]@@,
+** @@[=?G={*$ThumbList_G}=]@@ etc. (see [[#questionvars|question-variables]] for more.
+
+In the template you can use directives like @@[=(:title {*$UpFile}:)=]@@, @@[=(:noleft:)=]@@, @@[=(:noaction:)=]@@, @@[=(:nofooter:)=]@@, etc. and a link like @@[=[[{*$FullName} | Back to gallery ]]=]@@ to return to the original page.
+
+''For PmWiki versions older than 2.1.27, please use @@[={$UpFile}=]@@ instead of @@[={*$UpFile}=]@@, @@[={$UpDir}=]@@ instead of @@[={*$UpDir}=]@@, etc.''
+
+You can even use @@[=(:thumb "{*$UpDirUpFile}" width=600:)=]@@ in the template, for example if the picture is 2000-3000 pixels and would break the layout, but do not set here the Supercache.
+
+!! Notes %h2%[[#notes]]
+* On the first run, all thumbnails are generated as the page renders. That is, on pages with very large number of thumbnails combined with a slow server, the script may not be able to create all the thumbnails at once (due to the max_execution_time limit). In that case, either put the thumbnails in several pages (fewer on each page), or reload the page again and again till all thumbnails are generated and cached (then it should be ok).
+
+
+!! Bugs and Suggestions %h2%[[#buglist]]
+
+
+!! Change log / Release notes %h2%[[#relnotes]]
+Current (recommended) version is [[(Attach:)thumblist2.php]] and [[(Attach:)thumblist2-actions.php]] (version {$:Version}).
+Comments and bug reports [[{$Name}-Talk|are welcome]].
+
+(:div style="height:12em; padding:.4em; border:1px solid #dddddd; background-color: #f8f8f8; overflow: auto;":)
+2008-07-14
+* Added @@height=@@ parameter (suggested by Simon). Fix ImageMagick command line color argument (quotes are required on some systems).
+85I (2008-05-18)
+* Added @@target=@@ atribute for links, @@tlmode=-1@@ and other minor changes [[http://galleries.accent.bg/Thumblist2/DifferentTrails|#]] suggested by [[~Dfaure]]. 
+841 (2008-04-01)
+* Fixed a problem with the @@htmlpx=1@@ setting (thumbnail size was never displayed).
+83Q, 83Qb (2008-03-26)
+* Fixed a security vulnerability (caught by Fritz Webering). All users are urged to upgrade. Added AutoPurge feature.
+(:divend:)
+
+!! Comments %h2%[[#comments]]
+See Discussion at [[{$Name}-Talk]].
+
+!! See Also %h2%[[#seealso]]
+* [[Mini]] is an extremely stripped-down, simpler version of Thumblist that may be easier to use. It produces square thumbnails.
+* [[Category.Images]] for similar recipes.
+* [[PmWiki.UploadsAdmin]], especially the setting @@$UploadPrefixFmt = '/$Group/$Name';@@ can be very handy for this recipe (all pictures in a distinct directory).
+
+!! Contributors %h2%[[#contributors]]
+* The script was written and is maintained by [[~Petko]]. The first version was loosely modeled after [[PmWiki/PageDirectives#attachlist| [=(:attachlist:)=] ]].
+* Several PmWiki users gave nice ideas, code and encouragements at [[ThumbList-Talk]].
