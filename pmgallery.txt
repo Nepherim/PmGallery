@@ -1,104 +1,195 @@
-%define=bluebox apply=block bgcolor=#eeffee border="1px solid blue" padding=4px%%define=h2 apply=block border-bottom="3px double blue" color=darkblue%%define=h3 apply=block border-bottom="1px solid blue" color=darkblue%%define=h4 apply=block border-bottom="1px dotted blue" color=darkblue%%define=py apply=block color=navy font-style=italic%(:title pmgallery:)
+%define=bluebox bgcolor=#eeffee border="1px solid blue" padding=4px%
+%define=box margin-left=40px margin-top=10px padding=4px bgcolor=#f8f8f8 %
+%define=h2 apply=block border-top="3px solid darkblue" color=darkblue padding-top=2px%
+%define=h3 apply=block border-bottom="1px solid darkblue" color=darkblue%
+%define=h4 apply=block border-bottom="1px dotted darkblue" color=darkblue%
+%define=py apply=block color=navy font-style=italic%
+(:title pmgallery:)
 >>recipeinfo bluebox<<
 Summary: Display your Picasa albums and pictures within PmWiki.
-Version: Alpha -- 0.1 (14-Jul-2008)
-Prerequisites: PHP5
+Version: Beta -- 0.1 (17-Jul-2008)
+Prerequisites: '''PHP5'''
 Maintainer: [[~DaveG]]
-Categories: [[!Images]], [[!Gallery]]
+Categories: [[!Images]], [[!Gallery]], [[!Picasa]], [[!Flickr]]
 Discussion: [[{$Name}-Talk]]
 Download: [[(Attach:)pmgallery.zip]]
 >><<
-[[#intro]]
-!! Summary %h2%
-pmGallery automatically generates 
+
+!! Summary [[#intro]]%h2%
+pmGallery can be used to display albums, thumbnails, and images direct from image stores like Picasa (Flickr coming soon), inside PmWiki pages. 
+
+(:div style="padding:.4em; border:1px solid red; background-color: #f8f8f8; overflow: auto;":)
+'''17-Jul-08'': This cookbook is Beta. Using it will not cause any loss of data, but there may be bugs, and things may not work quite right. See the [[#buglist|bug list]] for all known problems. If you do find anything odd please let me know on the [[{$Name}-Talk|discussion page]].
+(:divend:)
 
 !!! Table of contents %h3%
 (:div style="font-size:.85em; padding:0;":)
-* [[#intro|Questions answered by this recipe]] |
-  [[#description|Description]] |
-  '''[[#examples|Examples]]''' |
-  [[#installation|Installation]]
-* '''[[#basic-usage|Basic usage]]''' |
-  [[#basic-tl|Thumblist]] |
-  [[#singlethumb|Single thumbnail]]
+* [[#description|Description]] | [[#seenat|Being used at...]]
+* [[#installation|Installation]] | [[#parameters|Parameters]] | [[#examples|Examples]] | [[#style|Style]]
+* [[#buglist|Bug List]] | [[#changelog|Change Log]]
+* [[#comments|Comments]] | [[#seealso|See Also]] | [[#contributors|Contributors]]
 (:divend:)
 
-!! [[#description]] Description %h2%
+!! Description [[#description]]%h2%
 (:Description Uses a PmWiki markup to embed Picasa albums and images on a PmWiki page. Provides integration with [[Cookbook/Galleria]].:){$Description}
 
-Features:
-* 
+!!! Features %h3%
+* Display album covers clickable to the images within the album
+* Display thumbnail images, clickable to larger images
+* Display the contents of one or more albums on a single wiki page
+* Can automatically create 'virtual' wiki pages. This means you can display an entire album, and it's images with a single [@ (:pmgallery :)@] directive!
+* Display random images from one or more albums
+* Automatic caching of feed files -- images are never stored locally, always retrieved from Picasa/Flickr
+* Display images from public and private albums
+* Make full use of your Picasa/Flickr tags
+* Future: display additional data, like Exif, comments, etc.
 
-!! Being used at...[[#examples]]%h2%
+!! Being used at...[[#seenat]]%h2%
+If you're using pmGallery, feel free to add your site to this list. Let others see what pmGallery can do!
 
 !! Installation [[#installation]]%h2%
-To install a new version:
+To install:
 * Extract the files and directories in [[(Attach:)pmgallery.zip]] into your cookbook directory. Everything should be inside a folder [=cookbook/pmgallery=].
-* Add this line to your config.php:\\
-  @@[=include_once("$FarmD/cookbook/pmgallery/pmgallery.php");=]@@
+  After extracting the files you should have:
+[@
+            /cookbook/pmgallery/
+               |- pmgallery.php
+               |- feeder.php
+               |- picasa.php5
+               |
+               |- /cookbook/pmgallery/wikilib.d/
+               |      |- pmGallery.GroupFooter
+               |
+               |- /cookbook/pmgallery/cache/
+                      |- <empty>     
+@]
+* Add these lines to your [@config.php@], changing "nickname" to your [[#nickname|Picasa nickname]]:
+>>box<<
+[@
+$pmGallery['user'] = 'nickname';
+include_once("$FarmD/cookbook/pmgallery/pmgallery.php");@]
+>><<
 
-!! Basic usage %h2%[[#basic-usage]]
+!! Options [[#options]]%h2%
+pmGallery makes heavy use of '[[#virtualpages|virtual pages]]', which do not really exist within the wiki. If you are making use of these virtual pages to display albums and images, then you'll need to prevent PmWiki from displaying the usual 'page not found' error message":
+[@The page "Unphotographed.Quiddity" doesn't exist. (Create Unphotographed.Quiddity)@]
 
+By pre-defining these 'virtual groups' pmGallery suppresses the 'page not found' message for all pages within that group. Other groups will still show the message as usual. Add this to you [@config.php@] before the [@include_once@] line:
+[@$pmGallery['virtualgroups'] = array('VirtualGroup1,VirtualGroup2');@]
 
+!! Parameters [[#parameters]]%h2%
+All parameters below can either set parameters in your config.php, where you know they will apply site wide, or specify parameters at each [@ (:pmgallery :)@] directive. Parameters supplied in [@config.php@] will be over-ridden if also supplied within the directive.
 
-!! Advanced users %h2%[[#advanced]]
-'-''For PmWiki versions older than 2.1.27 use [="{$FullName}" instead of "{*$FullName}"=].''-'
+'''''The only parameter you really must set is [@user@].'''''
 
-From version 2008-02-08 on, it is possible to manually select another ImageTemplate page in each gallery page. To do this, add in the wiki page containing the thumblist, a new PageTextVariable called "ImageTemplate":
- [@(:Image@][@Template:SomePage:)@]
- [@(:thumblist usetemplate=1 [...]:)@]
-where SomePage (or OtherGroup.SomePage) is your ImageTemplate. [[ http://galleries.accent.bg/Thumblist2/Sandbox7 | Demo]].
+* In order to set parameters in [@config.php@] use this format:
+>>box<<
+  [@ $pmGallery['parameter_name'] = 'value';@]
+>><<
+* In order to set parameters with the markup directive use this format -- note that quotes are optional, but '''must''' be used if the value contains spaces.
+>>box<<
+  [@ (:pmgallery parameter_name="value" :) @]
+>><<
 
-[[#pagevariables]]
-In the template there are some new [[(PmWiki.)page variables]]:
-* @@[={*$UpFile}=]@@ = the file name, ex. @@my_picture.jpg@@
-* @@[={*$UpDir}=]@@ = the wiki page to which the image was uploaded, ex. @@Group.Page@@ (may be different from the current page @@[={*$FullName}=]@@)
-* @@[={*$UpDirUpFile}=]@@ = a string like @@Group.Page/my_picture.jpg@@, easy to use in Attach:.
-* (for advanced users) @@[={*$UpFilePage}=]@@ = a virtual page name for single picture comments (the filename capitalized and only with allowed pagename characters), ex. @@Mypicturejpg@@. You can use this to set some individual file comment or description possibility, using other recipes ([[PmForm]], [[Fox]], [[AddDeleteLine2]], etc.). For example:\\
-  @@[=(:include FileComments/{*$UpFilePage}:)=]@@ or @@[=(:include {*$UpFilePage}-comments:)=]@@
-* @@[={*$PrevLink}=]@@ and @@[={*$NextLink}=]@@ - links to previous and next image in the current gallery (empty if no prev/next). See [[http://galleries.accent.bg/Thumblist2/TemplateTrails|an example]].
-* @@[={*$PrevThumb}=]@@ and @@[={*$NextThumb}=]@@ - thumbnail links to previous and next image in the current gallery (empty if no prev/next). See [[http://galleries.accent.bg/Thumblist2/Sandbox5?action=imgtpl&G=1&updir=Thumblist2.Thumblist2&upname=Athens2.jpg|an example]].
-* All available [[#questionvars|question-variables]] (except [=?n, ?N, ?u, ?U=]) are transposed into page variables and can be used in the template like this:
-** @@[=?h={*$ThumbList_h}=]@@,
-** @@[=?w={*$ThumbList_w}=]@@,
-** @@[=?G={*$ThumbList_G}=]@@ etc. (see [[#questionvars|question-variables]] for more.
+These parameters are typically provided within the markup directive:
+* '''album''': The name of the album -- you can see this at the end of the URL on Picasa public albums. For example [@picasaweb.google.com/nepherim/NewYork2007@], the album name is [@NewYork2007@].
+  If album is supplied, then show images in the album; if album is blank then show a list of albums.
+  You can provide more than one album name, separated with a comma:
+>>box<<
+  [@(:pmgallery album="NewYork2007,Quiddity":)@]
+>><<
 
-In the template you can use directives like @@[=(:title {*$UpFile}:)=]@@, @@[=(:noleft:)=]@@, @@[=(:noaction:)=]@@, @@[=(:nofooter:)=]@@, etc. and a link like @@[=[[{*$FullName} | Back to gallery ]]=]@@ to return to the original page.
+* '''wikitarget''': Specifies the group or page to load images into when the user clicks.
+  Usually left blank, in which case the current group will be used, with the name of the image being used as the page name. 
+  Otherwise for albums specify the wiki group; for pages specify the [@group .page@].
+* '''tag''': Used to search for images with matching tags.
+* '''random''': Number of random images to include. If more than one [@album@] is provided, images will be selected randomly across albums.
+* '''startimg''': Specified the image to start displaying. Used if paging across many images, in conjunction with 'maxresults'.
+* '''width''': Override for image display; usually set in CSS rather than as a parameter.
+* '''height''': Override for image display; usually set in CSS rather than as a parameter.
 
-''For PmWiki versions older than 2.1.27, please use @@[={$UpFile}=]@@ instead of @@[={*$UpFile}=]@@, @@[={$UpDir}=]@@ instead of @@[={*$UpDir}=]@@, etc.''
+!!! Usually in markup directive %h3%
+These parameters usually set in [@config.php@], but may sometimes in the markup directive:
+* [[#nickname]]'''user: With Picasa this is the username or nickname that you login with, ie, "nepherim".'''
+* '''thumbsize''': Default is 72. Other options are: 32, 48, 64, 72, 144, 160,200, 288, 320, 400, 512, 576, 640, 720, 800
+* '''imagesize''': Default is 640. Other options are: 32, 48, 64, 72, 144, 160,200, 288, 320, 400, 512, 576, 640, 720, 800
+* '''maxresults''': Maximum number of images or albums to display on a single page. Default is 50.
+* '''wrapper''': A '>' separated string defining the format for outer and inner html tags. The outer tag surrounds all image/albums being displayed. The inner tag surrounds each image or album.
+  Default is 'div'.
+  Examples: 'ul > li', 'div > div', 'div', 'span', etc
+* '''mode''': Determines how pmGallery will operate.
+** 'cover': shows the cover of the album(s) specified.
+** 'linkdirect': links direct to source image, rather than embedding the image within a wiki page. Usually used with external plugins (like [[Galleria]] that need the full image URL to do their magic.
+* '''provider''': Where the images are coming from: "picasa". Default is "picasa"
 
-You can even use @@[=(:thumb "{*$UpDirUpFile}" width=600:)=]@@ in the template, for example if the picture is 2000-3000 pixels and would break the layout, but do not set here the Supercache.
+!!! Usually site-wide %h3%
+These parameters are usually set globally in [@config.php@]:
+* '''urlbase''': Country code of the source of the RSS feed, ie, "de", "fr", "co.uk", etc. Default is "com"
+* '''proxy''': specify the proxy and port ('proxy.server.com:8080')
+* '''authkey''': Used to display private albums and images. Each key is specific to the domain on which your wiki resides. You'll need to get either a Picasa API key, or a Flickr API key.
+  '''Not yet fully supported -- I'm not clear how Picasa manages authkeys.'''
+* '''cachedir''': Location of the cache directory. Default is [directory of this file].'/cache'. '''NO trailing /'''
+* '''cachelife''': Determines how long cache entries remain. Entries are automatically deleted after this period. Set to '0' to disable the cache. Default is '7200' (2 hours).
 
-!! Notes %h2%[[#notes]]
-* On the first run, all thumbnails are generated as the page renders. That is, on pages with very large number of thumbnails combined with a slow server, the script may not be able to create all the thumbnails at once (due to the max_execution_time limit). In that case, either put the thumbnails in several pages (fewer on each page), or reload the page again and again till all thumbnails are generated and cached (then it should be ok).
+!!! Not usually used %h3%
+These parameters are not typically set by the user:
+* '''debug''': Set to [@true@] (not quoted), to send debugging output to the web server log. Default is [@false@].
+* '''imageurl''': Usually set automatically, and does not need to be set by user.
 
+!! Styling [[#style]]%h2%
+Coming later... (outer and inner classes)
 
-!! Bugs and Suggestions %h2%[[#buglist]]
+!! Examples [[#examples]]%h2%
+In all the examples below, you only need to provide the parameters within the markup if they are not already in [@config.php@], or if you want to override the values in [@config.php@].
 
+!!! Automatically generate virtual albums [[#virtualpages]]%h3%
+pmGallery can automatically generate a thumbnail list of clickable album covers, linking to clickable image thumbnails, and onto a large version of the image. You only need to include the markup directive on a single page. No other pages need to be created! Add this directive to any page, replacing 'nickname' with your actual nickname:
+>>box<<
+[@(:pmgallery user=nickname :)@]
+>><<
 
-!! Change log / Release notes %h2%[[#relnotes]]
-Current (recommended) version is [[(Attach:)thumblist2.php]] and [[(Attach:)thumblist2-actions.php]] (version {$:Version}).
-Comments and bug reports [[{$Name}-Talk|are welcome]].
+!!! Include images from multiple albums %h3%
+>>box<<
+[@(:pmgallery user=nickname albums="album1,album2" :)@]
+>><<
 
-(:div style="height:12em; padding:.4em; border:1px solid #dddddd; background-color: #f8f8f8; overflow: auto;":)
-2008-07-14
-* Added @@height=@@ parameter (suggested by Simon). Fix ImageMagick command line color argument (quotes are required on some systems).
-85I (2008-05-18)
-* Added @@target=@@ atribute for links, @@tlmode=-1@@ and other minor changes [[http://galleries.accent.bg/Thumblist2/DifferentTrails|#]] suggested by [[~Dfaure]]. 
-841 (2008-04-01)
-* Fixed a problem with the @@htmlpx=1@@ setting (thumbnail size was never displayed).
-83Q, 83Qb (2008-03-26)
-* Fixed a security vulnerability (caught by Fritz Webering). All users are urged to upgrade. Added AutoPurge feature.
-(:divend:)
+!!! Include a random number of images from multiple albums %h3%
+>>box<<
+[@(:pmgallery user=nickname albums="album1,album2" random=5 :)@]
+>><<
 
-!! Comments %h2%[[#comments]]
+!!! Generate a numbered list albums %h3%
+>>box<<
+[@(:pmgallery user=nickname wrapper="ul>li" :)@]
+>><<
+
+!!! Present images in a different wiki group from albums %h3%
+Place the markup directive on a page in [@groupA@], and have the images appear on pages in group [@groupB@]:
+>>box<<
+[@(:pmgallery user=nickname wikitarget="groupB" :)@]
+>><<
+
+!!! Display large thumbnails %h3%
+>>box<<
+[@(:pmgallery user=nickname thumbsize=160 :)@]
+>><<
+
+!! Notes [[#notes]]%h2%
+Cache empty
+
+!! Bugs and Suggestions [[#buglist]]%h2%
+* new: Provide Flickr support.
+* new: Retrieve images by photoid, rather than using full url.
+* new: Allow exclusion of albums.
+
+!! Change log / Release notes [[#changelog]]%h2%
+* '''0.1 17-Jul-08''': First beta release.
+
+!! Comments [[#comments]]%h2%
 See Discussion at [[{$Name}-Talk]].
 
-!! See Also %h2%[[#seealso]]
-* [[Mini]] is an extremely stripped-down, simpler version of Thumblist that may be easier to use. It produces square thumbnails.
-* [[Category.Images]] for similar recipes.
-* [[PmWiki.UploadsAdmin]], especially the setting @@$UploadPrefixFmt = '/$Group/$Name';@@ can be very handy for this recipe (all pictures in a distinct directory).
+!! See Also [[#seealso]]%h2%
+* [[Galleria]]: pmGallery provides full integration with the  Galleria image viewer.
 
-!! Contributors %h2%[[#contributors]]
-* The script was written and is maintained by [[~Petko]]. The first version was loosely modeled after [[PmWiki/PageDirectives#attachlist| [=(:attachlist:)=] ]].
-* Several PmWiki users gave nice ideas, code and encouragements at [[ThumbList-Talk]].
+!! Contributors [[#contributors]]%h2%
+* The script was written and is maintained by [[~DaveG]].

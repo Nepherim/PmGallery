@@ -50,7 +50,7 @@ $RecipeInfo['pmGallery']['Date'] = '2008-07-13';
 /**
 * Code executed on include
 */
-Markup("pmGallery", 'inline', "/\\(:pmGallery\\s*(.*?):\\)/se", "Keep(pmGallery(PSS('$1')))");
+Markup("pmgallery", 'inline', "/\\(:pmgallery\\s*(.*?):\\)/se", "Keep(pmGallery(PSS('$1')))");
 $pmGroup = PageVar($GLOBALS['pagename'], '$Group');
 
 // Specifying $pmGallery['virtualgroups'] allows us to prevent "Page not found..." error message showing up
@@ -123,7 +123,7 @@ function pmGallery($args) {
 		return '<div class="pmGalleryWrapperImage"><img src="http://'. $opt['imageurl']. '" /></div>';
 	}
 
-	require_once('phpPicasa.php5');
+	require_once('picasa.php5');
 	$myPicasaParser = new picasaAPI();
 	$myPicasaParser->updateOption('startimg', $opt['startimg']);
 	$myPicasaParser->updateOption('tag', $opt['tag']);
@@ -174,6 +174,7 @@ function pmGallery($args) {
 		$image_title = explode('.',$image['title']);
 
 		if ( ($displayCover && in_array($gphoto['name'], $albums)) || !$displayCover) {
+print($gphoto['id'].'<br>');
 			$text .=
 				'<'. $wrapper[1]. '>'.
 				MakeLink(
