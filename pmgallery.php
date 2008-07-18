@@ -6,10 +6,10 @@
     (at your option) any later version.
 
 	Shows the clickable album covers for all public albums of user XXXX
-    	(:jsgallery user=XXXX :)
+    	(:pmgallery user=XXXX :)
 
     Shows photos from album 1234
-    	(:jsgallery album=1234 user=XXXX :)
+    	(:pmgallery album=1234 user=XXXX :)
 
     Available parameters with default values
 		'album'			=> '',				// if album is supplied, then show images in the album, so if album is blank then show a list of albums
@@ -42,7 +42,7 @@
     To use this recipe, simply copy it into the cookbook/ directory, and
     add the following line to a local customization:
 
-        include_once("$FarmD/cookbook/pmGallery.php");
+        include_once("$FarmD/cookbook/pmgallery.php");
 */
 $RecipeInfo['pmGallery']['Version'] = '0.1';
 $RecipeInfo['pmGallery']['Date'] = '2008-07-13';
@@ -174,7 +174,6 @@ function pmGallery($args) {
 		$image_title = explode('.',$image['title']);
 
 		if ( ($displayCover && in_array($gphoto['name'], $albums)) || !$displayCover) {
-print($gphoto['id'].'<br>');
 			$text .=
 				'<'. $wrapper[1]. '>'.
 				MakeLink(

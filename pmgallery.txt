@@ -25,7 +25,7 @@ pmGallery can be used to display albums, thumbnails, and images direct from imag
 !!! Table of contents %h3%
 (:div style="font-size:.85em; padding:0;":)
 * [[#description|Description]] | [[#seenat|Being used at...]]
-* [[#installation|Installation]] | [[#parameters|Parameters]] | [[#examples|Examples]] | [[#style|Style]]
+* [[#installation|Installation]] | [[#parameters|Parameters]] | [[#examples|Examples]] | [[#style|Styling]]
 * [[#buglist|Bug List]] | [[#changelog|Change Log]]
 * [[#comments|Comments]] | [[#seealso|See Also]] | [[#contributors|Contributors]]
 (:divend:)
@@ -49,18 +49,18 @@ If you're using pmGallery, feel free to add your site to this list. Let others s
 
 !! Installation [[#installation]]%h2%
 To install:
-* Extract the files and directories in [[(Attach:)pmgallery.zip]] into your cookbook directory. Everything should be inside a folder [=cookbook/pmgallery=].
+* Extract the files and directories in [[(Attach:)pmgallery.zip]] into your cookbook directory. Everything should be inside a folder [@cookbook/pmgallery@].
   After extracting the files you should have:
 [@
-            /cookbook/pmgallery/
+            cookbook/pmgallery/
                |- pmgallery.php
                |- feeder.php
                |- picasa.php5
                |
-               |- /cookbook/pmgallery/wikilib.d/
+               |- /wikilib.d/
                |      |- pmGallery.GroupFooter
                |
-               |- /cookbook/pmgallery/cache/
+               |- /cache/
                       |- <empty>     
 @]
 * Add these lines to your [@config.php@], changing "nickname" to your [[#nickname|Picasa nickname]]:
@@ -136,9 +136,6 @@ These parameters are not typically set by the user:
 * '''debug''': Set to [@true@] (not quoted), to send debugging output to the web server log. Default is [@false@].
 * '''imageurl''': Usually set automatically, and does not need to be set by user.
 
-!! Styling [[#style]]%h2%
-Coming later... (outer and inner classes)
-
 !! Examples [[#examples]]%h2%
 In all the examples below, you only need to provide the parameters within the markup if they are not already in [@config.php@], or if you want to override the values in [@config.php@].
 
@@ -174,16 +171,21 @@ Place the markup directive on a page in [@groupA@], and have the images appear o
 [@(:pmgallery user=nickname thumbsize=160 :)@]
 >><<
 
+!! Styling [[#style]]%h2%
+Coming later... (outer and inner classes)
+
 !! Notes [[#notes]]%h2%
 Cache empty
+Virtual pages: Auto creation of GroupFooter
 
 !! Bugs and Suggestions [[#buglist]]%h2%
 * new: Provide Flickr support.
+* new: Use templates to provide advanced layout support.
 * new: Retrieve images by photoid, rather than using full url.
 * new: Allow exclusion of albums.
 
 !! Change log / Release notes [[#changelog]]%h2%
-* '''0.1 17-Jul-08''': First beta release.
+* '''v0.1: 17-Jul-08''': First beta release.
 
 !! Comments [[#comments]]%h2%
 See Discussion at [[{$Name}-Talk]].
