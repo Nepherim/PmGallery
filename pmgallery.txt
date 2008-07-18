@@ -19,7 +19,7 @@ Download: [[(Attach:)pmgallery.zip]]
 pmGallery can be used to display albums, thumbnails, and images direct from image stores like Picasa (Flickr coming soon), inside PmWiki pages. 
 
 (:div style="padding:.4em; border:1px solid red; background-color: #f8f8f8; overflow: auto;":)
-'''17-Jul-08'': This cookbook is Beta. Using it will not cause any loss of data, but there may be bugs, and things may not work quite right. See the [[#buglist|bug list]] for all known problems. If you do find anything odd please let me know on the [[{$Name}-Talk|discussion page]].
+'''17-Jul-08''': This cookbook is Beta. Using it will not cause any loss of data, but there may be bugs, and things may not work quite right. See the [[#buglist|bug list]] for all known problems. If you do find anything odd please let me know on the [[{$Name}-Talk|discussion page]].
 (:divend:)
 
 !!! Table of contents %h3%
@@ -71,11 +71,14 @@ include_once("$FarmD/cookbook/pmgallery/pmgallery.php");@]
 >><<
 
 !! Options [[#options]]%h2%
+!!! Page not Found
 pmGallery makes heavy use of '[[#virtualpages|virtual pages]]', which do not really exist within the wiki. If you are making use of these virtual pages to display albums and images, then you'll need to prevent PmWiki from displaying the usual 'page not found' error message":
 [@The page "Unphotographed.Quiddity" doesn't exist. (Create Unphotographed.Quiddity)@]
 
 By pre-defining these 'virtual groups' pmGallery suppresses the 'page not found' message for all pages within that group. Other groups will still show the message as usual. Add this to you [@config.php@] before the [@include_once@] line:
 [@$pmGallery['virtualgroups'] = array('VirtualGroup1,VirtualGroup2');@]
+
+!!! Auto-Create GroupFooter
 
 !! Parameters [[#parameters]]%h2%
 All parameters below can either set parameters in your config.php, where you know they will apply site wide, or specify parameters at each [@ (:pmgallery :)@] directive. Parameters supplied in [@config.php@] will be over-ridden if also supplied within the directive.

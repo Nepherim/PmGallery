@@ -60,7 +60,7 @@ if (!empty($pmGallery['virtualgroups'])) {
 	if ($autogroup || in_array($pmGroup, $pmGallery['virtualgroups'])) {
 		// prevent "Page not found..." error message showing up in pmGallery groups
 		//PageNotFound file doesn't need to exist!
-		$GLOBALS['DefaultPageTextFmt'] = '(:include {$Group}.jqPageNotFound:)';
+		$GLOBALS['DefaultPageTextFmt'] = '(:include {$Group}.pmPageNotFound:)';
 
 		if ($autogroup) {
 			$n = $pmGroup. '.GroupFooter';
@@ -72,7 +72,7 @@ if (!empty($pmGallery['virtualgroups'])) {
 				array_splice($GLOBALS['WikiLibDirs'], $where, 0, array(new PageStore($GLOBALS['PageStorePath'])));
 
 				// if there is no footer for this group then copy the default over.
-				WritePage($n, ReadPage('pmGallery.GroupFooter'));
+				WritePage($n, ReadPage('PmGallery.GroupFooter'));
 			}
 		}
 	}
