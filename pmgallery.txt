@@ -7,7 +7,7 @@
 (:title pmGallery:)
 >>recipeinfo bluebox<<
 Summary: Display your Picasa albums and pictures within PmWiki.
-Version: Beta -- 0.1 (17-Jul-2008)
+Version: Beta -- 0.1.3 (19-Jul-2008)
 Prerequisites: '''PHP5'''
 Maintainer: [[~DaveG]]
 Categories: [[!Images]], [[!Gallery]], [[!Picasa]], [[!Flickr]]
@@ -19,13 +19,14 @@ Download: [[(Attach:)pmgallery.zip]]
 pmGallery can be used to display albums, thumbnails, and images direct from image stores like Picasa (Flickr coming soon), inside PmWiki pages. No images or thumbnails are stored locally, so there apart from uploading to Picasa there's no extra work involved in displaying your images within your wiki.
 
 (:div style="padding:.4em; border:1px solid red; background-color: #f8f8f8; overflow: auto;":)
-'''17-Jul-08''': This cookbook is Beta. Using it will not cause any loss of data, but there may be bugs, and things may not work quite right. See the [[#buglist|bug list]] for all known problems. If you do find anything odd please let me know on the [[{$Name}-Talk|discussion page]].
+'''17-Jul-08''': This cookbook is Beta. Using it will not cause any loss of data, but there may be bugs, and things may not work quite right. See the [[#buglist|bug list]] for all known problems. If you do find anything odd please let me know on the [[{$Name}-Talk|discussion page]].\\
+'''19-Jul-08''': pmGallery '''requires PHP5'''. If you're using PHP4 you will see errors, not images.
 (:divend:)
 
 !!! Table of contents %h3%
 (:div style="font-size:.85em; padding:0;":)
-* [[#description|Description]] | [[#demo|Demo]] | [[#seenat|Being used at...]]
-* [[#installation|Installation]] | [[#parameters|Parameters]] | [[#examples|Examples]] | [[#style|Styling]]
+* [[#description|Description]] | [[#features|Features]] | [[#demo|Demo]] | [[#seenat|Being used at...]]
+* [[#installation|Installation]] | [[#options|Options]] | [[#parameters|Parameters]] | [[#examples|Examples]] | [[#style|Styling]]
 * [[#buglist|Bug List]] | [[#changelog|Change Log]]
 * [[#comments|Comments]] | [[#seealso|See Also]] | [[#contributors|Contributors]]
 (:divend:)
@@ -33,7 +34,7 @@ pmGallery can be used to display albums, thumbnails, and images direct from imag
 !! Description [[#description]]%h2%
 (:Description Uses a PmWiki markup to embed Picasa albums and images on a PmWiki page. Provides integration with [[Cookbook/Galleria]].:){$Description}
 
-!!! Features %h3%
+!!! Features [[#features]]%h3%
 * Display album covers clickable to the images within the album
 * Display thumbnail images, clickable to larger images
 * Display the contents of one or more albums on a single wiki page
@@ -229,7 +230,11 @@ The [[#autocreate|automatically generated]] [@GroupFooter@] includes a DIV used 
 * new: Allow exclusion of albums.
 
 !! Change log / Release notes [[#changelog]]%h2%
-!!! v0.1 (17-Jul-08) %h3%
+!!! v0.1.3 (19-Jul-08) %h3%
+''Contributors: [[~DaveG]]
+* bug: corrected url construct (first parameter had '&' not '?'
+
+!!! v0.1.0 (17-Jul-08) %h3%
 ''Contributors: [[~DaveG]]
 
 * First beta release.

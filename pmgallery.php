@@ -138,7 +138,7 @@ function pmGallery($args) {
 	$myPicasaParser->updateOption('authkey', $opt['authkey']);
 
 	// parse out the HTML outter and inner wrappers "ul > li" or "div > div", etc
-	$wrapper = explode('>', $opt['wrapper']);
+	$wrapper = explode('>', html_entity_decode($opt['wrapper']));
 	$wrapper[0]=trim($wrapper[0]);
 	$wrapper[1]=trim($wrapper[ (empty($wrapper[1]) ? 0 : 1) ]);
 
