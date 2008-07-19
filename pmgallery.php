@@ -44,8 +44,8 @@
 
         include_once("$FarmD/cookbook/pmgallery.php");
 */
-$RecipeInfo['pmGallery']['Version'] = '0.1';
-$RecipeInfo['pmGallery']['Date'] = '2008-07-13';
+$RecipeInfo['pmGallery']['Version'] = '0.1.3';
+$RecipeInfo['pmGallery']['Date'] = '2008-07-19';
 
 /**
 * Code executed on include
@@ -60,7 +60,7 @@ if (!empty($pmGallery['virtualgroups'])) {
 	if ($autogroup || in_array($pmGroup, $pmGallery['virtualgroups'])) {
 		// prevent "Page not found..." error message showing up in pmGallery groups
 		//PageNotFound file doesn't need to exist!
-		$GLOBALS['DefaultPageTextFmt'] = '(:include {$Group}.pmPageNotFound:)';
+		SDV($GLOBALS['DefaultPageTextFmt'],'(:include {$Group}.pmPageNotFound:)');
 
 		if ($autogroup) {
 			$n = $pmGroup. '.GroupFooter';
@@ -195,8 +195,8 @@ function pmGallery($args) {
 							// add optional parameters onto the end of the link url ( &album )
 							($linkDirect ? ''
 								: ($displayCover
-										? '&album='. htmlentities($gphoto['name'])
-										: '&imageurl='. htmlentities(str_replace('http://', '', $image['largeSrc']))
+										? '?album='. htmlentities($gphoto['name'])
+										: '?imageurl='. htmlentities(str_replace('http://', '', $image['largeSrc']))
 									)
 							).
 						"' ".

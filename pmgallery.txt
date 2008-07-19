@@ -4,7 +4,7 @@
 %define=h3 apply=block border-bottom="1px solid darkblue" color=darkblue%
 %define=h4 apply=block border-bottom="1px dotted darkblue" color=darkblue%
 %define=py apply=block color=navy font-style=italic%
-(:title pmgallery:)
+(:title pmGallery:)
 >>recipeinfo bluebox<<
 Summary: Display your Picasa albums and pictures within PmWiki.
 Version: Beta -- 0.1 (17-Jul-2008)
@@ -16,7 +16,7 @@ Download: [[(Attach:)pmgallery.zip]]
 >><<
 
 !! Summary [[#intro]]%h2%
-pmGallery can be used to display albums, thumbnails, and images direct from image stores like Picasa (Flickr coming soon), inside PmWiki pages. 
+pmGallery can be used to display albums, thumbnails, and images direct from image stores like Picasa (Flickr coming soon), inside PmWiki pages. No images or thumbnails are stored locally, so there apart from uploading to Picasa there's no extra work involved in displaying your images within your wiki.
 
 (:div style="padding:.4em; border:1px solid red; background-color: #f8f8f8; overflow: auto;":)
 '''17-Jul-08''': This cookbook is Beta. Using it will not cause any loss of data, but there may be bugs, and things may not work quite right. See the [[#buglist|bug list]] for all known problems. If you do find anything odd please let me know on the [[{$Name}-Talk|discussion page]].
@@ -24,7 +24,7 @@ pmGallery can be used to display albums, thumbnails, and images direct from imag
 
 !!! Table of contents %h3%
 (:div style="font-size:.85em; padding:0;":)
-* [[#description|Description]] | [[#seenat|Being used at...]]
+* [[#description|Description]] | [[#demo|Demo]] | [[#seenat|Being used at...]]
 * [[#installation|Installation]] | [[#parameters|Parameters]] | [[#examples|Examples]] | [[#style|Styling]]
 * [[#buglist|Bug List]] | [[#changelog|Change Log]]
 * [[#comments|Comments]] | [[#seealso|See Also]] | [[#contributors|Contributors]]
@@ -37,12 +37,15 @@ pmGallery can be used to display albums, thumbnails, and images direct from imag
 * Display album covers clickable to the images within the album
 * Display thumbnail images, clickable to larger images
 * Display the contents of one or more albums on a single wiki page
-* Can automatically create 'virtual' wiki pages. This means you can display an entire album, and it's images with a single [@ (:pmgallery :)@] directive!
+* Can automatically create 'virtual' wiki pages. This means you can display an entire album, and it's images with a single [@(:pmgallery:)@] directive!
 * Display random images from one or more albums
 * Automatic caching of feed files -- images are never stored locally, always retrieved from Picasa/Flickr
 * Display images from public and private albums
 * Make full use of your Picasa/Flickr tags
 * Future: display additional data, like Exif, comments, etc.
+
+!! Demo [[#demo]]%h3%
+Basic demo is over at [[http://wiki.solidgone.org/PmGallery/Demo | solidgone.org]]. Demo will be added here when things stablize.
 
 !! Being used at...[[#seenat]]%h2%
 If you're using pmGallery, feel free to add your site to this list. Let others see what pmGallery can do!
@@ -51,21 +54,26 @@ If you're using pmGallery, feel free to add your site to this list. Let others s
 To install:
 * Extract the files and directories in [[(Attach:)pmgallery.zip]] into your cookbook directory. Everything should be inside a folder [@cookbook/pmgallery@].
   After extracting the files you should have:
-[@
-            cookbook/pmgallery/
-               |- pmgallery.php
-               |- feeder.php
-               |- picasa.php5
-               |
-               |- /wikilib.d/
-               |      |- pmGallery.GroupFooter
-               |
-               |- /cache/
-                      |- <empty>     
-@]
-* Add these lines to your [@config.php@], changing "nickname" to your [[#nickname|Picasa nickname]]:
 >>box<<
 [@
+   cookbook/pmgallery/
+      |- pmgallery.php
+      |- feeder.php
+      |- picasa.php5
+      |
+      |- /wikilib.d/
+      |      |- pmGallery.GroupFooter
+      |
+      |- /cache/
+             |- <empty>     
+@]
+>><<
+* Add these lines to your [@config.php@]:
+** changing "+VirtualGroup1" to the name of the PmWiki group in which your album will be placed. This is the same group as the page containing your [@(:pmgallery:)@] markup directive. Do not remove the "+" sign -- it's used to ensure [[#autocreate|automatic creation of a group footer]].
+** changing "nickname" to your [[#nickname|Picasa nickname]]
+>>box<<
+[@
+$pmGallery['virtualgroups'] = array('+VirtualGroup1');
 $pmGallery['user'] = 'nickname';
 include_once("$FarmD/cookbook/pmgallery/pmgallery.php");@]
 >><<
@@ -73,17 +81,35 @@ include_once("$FarmD/cookbook/pmgallery/pmgallery.php");@]
 !! Options [[#options]]%h2%
 !!! Page not Found
 pmGallery makes heavy use of '[[#virtualpages|virtual pages]]', which do not really exist within the wiki. If you are making use of these virtual pages to display albums and images, then you'll need to prevent PmWiki from displaying the usual 'page not found' error message":
+>>box<<
 [@The page "Unphotographed.Quiddity" doesn't exist. (Create Unphotographed.Quiddity)@]
+>><<
 
 By pre-defining these 'virtual groups' pmGallery suppresses the 'page not found' message for all pages within that group. Other groups will still show the message as usual. Add this to you [@config.php@] before the [@include_once@] line:
+>>box<<
 [@$pmGallery['virtualgroups'] = array('VirtualGroup1,VirtualGroup2');@]
+>><<
 
-!!! Auto-Create GroupFooter
+!!! Auto-Create GroupFooter [[#autocreate]]%h3%
+pmGallery will automatically create a [@Group.GroupFooter@] page for you if you include a "+" in front of the group name on the virtual path setting:
+>>box<<
+[@$pmGallery['virtualgroups'] = array('+VirtualGroup1,VirtualGroup2');@]
+>><<
+
+After the [@GroupFooter@] is created you can edit it, and change and format it as you require. The initial content of the [@GroupFooter@] is:
+>>box<<
+[@
+(:pmgallery:)
+(:div id="pmGallery_Image":)
+(:divend:)@]
+>><<
+
+The key [@(:pmgallery:)@] directive is there to actually generate the album or images. The "pmGallery_Image" DIV is there for [[#Galleria|Galleria integration]].
 
 !! Parameters [[#parameters]]%h2%
 All parameters below can either set parameters in your config.php, where you know they will apply site wide, or specify parameters at each [@ (:pmgallery :)@] directive. Parameters supplied in [@config.php@] will be over-ridden if also supplied within the directive.
 
-'''''The only parameter you really must set is [@user@].'''''
+The only parameter you really must set is [@user@]. But in order to enjoy the automatic generation of albums, you'll also need to either create [[#groupfooters]] or have pmGallery [[#autocreate|auto-generated]] them for you.
 
 * In order to set parameters in [@config.php@] use this format:
 >>box<<
@@ -148,6 +174,11 @@ pmGallery can automatically generate a thumbnail list of clickable album covers,
 [@(:pmgallery user=nickname :)@]
 >><<
 
+And then either create [[#groupfooters]] or have pmGallery [[#autocreate|auto-generate]] the footer for you. Change "groupname" to the name of the PmWiki group in which you want to auto-generate the album:
+>>box<<
+[@$pmGallery['virtualgroups'] = array('+groupname1');@]
+>><<
+
 !!! Include images from multiple albums %h3%
 >>box<<
 [@(:pmgallery user=nickname albums="album1,album2" :)@]
@@ -181,6 +212,16 @@ Coming later... (outer and inner classes)
 Cache empty
 Virtual pages: Auto creation of GroupFooter
 
+!!! Galleria [[#galleria]]%h3%
+The [[#autocreate|automatically generated]] [@GroupFooter@] includes a DIV used by [[Galleria]].
+>>box<<
+[@
+(:pmgallery:)
+(:div id="pmGallery_Image":)
+(:divend:)
+@]
+>><<
+
 !! Bugs and Suggestions [[#buglist]]%h2%
 * new: Provide Flickr support.
 * new: Use templates to provide advanced layout support.
@@ -188,7 +229,10 @@ Virtual pages: Auto creation of GroupFooter
 * new: Allow exclusion of albums.
 
 !! Change log / Release notes [[#changelog]]%h2%
-* '''v0.1: 17-Jul-08''': First beta release.
+!!! v0.1 (17-Jul-08) %h3%
+''Contributors: [[~DaveG]]
+
+* First beta release.
 
 !! Comments [[#comments]]%h2%
 See Discussion at [[{$Name}-Talk]].
