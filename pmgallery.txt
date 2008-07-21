@@ -1,9 +1,4 @@
-%define=bluebox bgcolor=#eeffee border="1px solid blue" padding=4px%
-%define=box margin-left=40px margin-top=10px padding=4px bgcolor=#f8f8f8 %
-%define=h2 apply=block border-top="3px solid darkblue" color=darkblue padding-top=2px%
-%define=h3 apply=block border-bottom="1px solid darkblue" color=darkblue%
-%define=h4 apply=block border-bottom="1px dotted darkblue" color=darkblue%
-%define=py apply=block color=navy font-style=italic%
+(:include DaveG.Styles:)
 (:title pmGallery:)
 >>recipeinfo bluebox<<
 Summary: Display your Picasa albums and pictures within PmWiki.
@@ -27,8 +22,8 @@ pmGallery can be used to display albums, thumbnails, and images direct from imag
 (:div style="font-size:.85em; padding:0;":)
 * [[#description|Description]] | [[#features|Features]] | [[#demo|Demo]] | [[#seenat|Being used at...]]
 * [[#installation|Installation]] | [[#options|Options]] | [[#parameters|Parameters]] | [[#examples|Examples]] | [[#style|Styling]]
-* [[#buglist|Bug List]] | [[#changelog|Change Log]]
-* [[#comments|Comments]] | [[#seealso|See Also]] | [[#contributors|Contributors]]
+* [[#notes|Notes]] | [[#buglist|Bug List]] | [[#changelog|Change Log]]
+* [[#comments|Comments]] | [[#seealso|See Also]]
 (:divend:)
 
 !! Description [[#description]]%h2%
@@ -43,10 +38,11 @@ pmGallery can be used to display albums, thumbnails, and images direct from imag
 * Automatic caching of feed files -- images are never stored locally, always retrieved from Picasa/Flickr
 * Display images from public and private albums
 * Make full use of your Picasa/Flickr tags
+* Full integration with [[Galleria]], means stylish image presentation!
 * Future: display additional data, like Exif, comments, etc.
 
 !! Demo [[#demo]]%h3%
-Basic demo is over at [[http://wiki.solidgone.org/PmGallery/Demo | solidgone.org]]. Demo will be added here when things stablize.
+Basic demo is over at [[http://wiki.solidgone.org/PmGallery | solidgone.org]]. Demo will be added here when things stablize.
 
 !! Being used at...[[#seenat]]%h2%
 If you're using pmGallery, feel free to add your site to this list. Let others see what pmGallery can do!
@@ -86,15 +82,15 @@ pmGallery makes heavy use of '[[#virtualpages|virtual pages]]', which do not rea
 [@The page "Unphotographed.Quiddity" doesn't exist. (Create Unphotographed.Quiddity)@]
 >><<
 
-By pre-defining these 'virtual groups' pmGallery suppresses the 'page not found' message for all pages within that group. Other groups will still show the message as usual. Add this to you [@config.php@] before the [@include_once@] line:
+By pre-defining these 'virtual groups' pmGallery suppresses the 'page not found' message for all pages within that group. Other groups will still show the message as usual. Add this to your [@config.php@] before the [@include_once@] line:
 >>box<<
-[@$pmGallery['virtualgroups'] = array('VirtualGroup1,VirtualGroup2');@]
+[@$pmGallery['virtualgroups'] = array('VirtualGroup1','VirtualGroup2');@]
 >><<
 
 !!! Auto-Create GroupFooter [[#autocreate]]%h3%
 pmGallery will automatically create a [@Group.GroupFooter@] page for you if you include a "+" in front of the group name on the virtual path setting:
 >>box<<
-[@$pmGallery['virtualgroups'] = array('+VirtualGroup1,VirtualGroup2');@]
+[@$pmGallery['virtualgroups'] = array('+VirtualGroup1','VirtualGroup2');@]
 >><<
 
 After the [@GroupFooter@] is created you can edit it, and change and format it as you require. The initial content of the [@GroupFooter@] is:
@@ -108,7 +104,7 @@ After the [@GroupFooter@] is created you can edit it, and change and format it a
 The key [@(:pmgallery:)@] directive is there to actually generate the album or images. The "pmGallery_Image" DIV is there for [[#Galleria|Galleria integration]].
 
 !! Parameters [[#parameters]]%h2%
-All parameters below can either set parameters in your config.php, where you know they will apply site wide, or specify parameters at each [@ (:pmgallery :)@] directive. Parameters supplied in [@config.php@] will be over-ridden if also supplied within the directive.
+All parameters below can either set parameters in your config.php, where you know they will apply site wide, or at each [@ (:pmgallery:)@] directive. Parameters supplied in [@config.php@] will be over-ridden if also supplied within the directive.
 
 The only parameter you really must set is [@user@]. But in order to enjoy the automatic generation of albums, you'll also need to either create [[#groupfooters]] or have pmGallery [[#autocreate|auto-generated]] them for you.
 
@@ -121,7 +117,7 @@ The only parameter you really must set is [@user@]. But in order to enjoy the au
   [@ (:pmgallery parameter_name="value" :) @]
 >><<
 
-These parameters are typically provided within the markup directive:
+These parameters are typically used within the markup directive:
 * '''album''': The name of the album -- you can see this at the end of the URL on Picasa public albums. For example [@picasaweb.google.com/nepherim/NewYork2007@], the album name is [@NewYork2007@].
   If album is supplied, then show images in the album; if album is blank then show a list of albums.
   You can provide more than one album name, separated with a comma:
@@ -231,11 +227,11 @@ The [[#autocreate|automatically generated]] [@GroupFooter@] includes a DIV used 
 
 !! Change log / Release notes [[#changelog]]%h2%
 !!! v0.1.3 (19-Jul-08) %h3%
-''Contributors: [[~DaveG]]
+''Contributors: [[~DaveG]]''
 * bug: corrected url construct (first parameter had '&' not '?'
 
 !!! v0.1.0 (17-Jul-08) %h3%
-''Contributors: [[~DaveG]]
+''Contributors: [[~DaveG]]''
 
 * First beta release.
 
@@ -244,6 +240,3 @@ See Discussion at [[{$Name}-Talk]].
 
 !! See Also [[#seealso]]%h2%
 * [[Galleria]]: pmGallery provides full integration with the  Galleria image viewer.
-
-!! Contributors [[#contributors]]%h2%
-* The script was written and is maintained by [[~DaveG]].

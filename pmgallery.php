@@ -50,7 +50,7 @@ $RecipeInfo['pmGallery']['Date'] = '2008-07-19';
 /**
 * Code executed on include
 */
-Markup("pmgallery", 'inline', "/\\(:pmgallery\\s*(.*?):\\)/se", "Keep(pmGallery(PSS('$1')))");
+Markup('pmgallery', 'inline', "/\\(:pmgallery\\s*(.*?):\\)/se", "Keep(pmGallery(PSS('$1')))");
 $pmGroup = PageVar($GLOBALS['pagename'], '$Group');
 
 // Specifying $pmGallery['virtualgroups'] allows us to prevent "Page not found..." error message showing up
@@ -83,7 +83,7 @@ if (!empty($pmGallery['virtualgroups'])) {
 * Main routine called from markup within wiki pages
 */
 function pmGallery($args) {
- 	$defaults = array(
+ 	$o = array(
 		'album'			=> '',				// if album is supplied, then show images in the album, so if album is blank then show a list of albums
 		'wikitarget'	=> '', 				// for albums specify the wiki group; for pages specify the group.page
 		'startimg'		=> '',				// used if paging across many images, in conjunction with 'maxresults'
@@ -111,44 +111,43 @@ function pmGallery($args) {
 		'cachedir' 		=> '',				// location of the cache directory. Default is [directory of this file].'/cache'. NO trailing /
 		'cachelife' 	=> '7200'			// default is '7200' (2 hours): set to '0' to disable the cache
 	);
-	$pmGallery = $GLOBALS['pmGallery'];
-	$opt = array_merge($defaults,$pmGallery);
-	$opt = array_merge($opt,ParseArgs($args));
-	$opt = array_merge($opt,$_GET);
+	$o = array_merge($o, $GLOBALS['pmGallery']);
+	$o = array_merge($o, ParseArgs($args));
+	$o = array_merge($o, $_GET);
 
-	$opt['wikitarget'] = (empty($opt['wikitarget']) ? $GLOBALS['pmGroup'] : $opt['wikitarget']);
+	$o['wikitarget'] = (empty($o['wikitarget']) ? $GLOBALS['pmGroup'] : $o['wikitarget']);
 
 	// if the image url supplied, then show the image
-	if (!empty($opt['imageurl'])) {
-		return '<div class="pmGalleryWrapperImage"><img src="http://'. $opt['imageurl']. '" /></div>';
+	if (!empty($o['imageurl'])) {
+		return '<div class="pmGalleryWrapperImage"><img src="http://'. $o['imageurl']. '" /></div>';
 	}
 
 	require_once('picasa.php5');
 	$myPicasaParser = new picasaAPI();
-	$myPicasaParser->updateOption('startimg', $opt['startimg']);
-	$myPicasaParser->updateOption('tag', $opt['tag']);
-	$myPicasaParser->updateOption('user', $opt['user'], false);
-	$myPicasaParser->updateOption('thumbsize', $opt['thumbsize'], false);
-	$myPicasaParser->updateOption('imagesize', $opt['imagesize'], false);
-	$myPicasaParser->updateOption('maxresults', $opt['maxresults'], false);
-	$myPicasaParser->updateOption('urlbase', $opt['urlbase']);
-	$myPicasaParser->updateOption('cachelife', $opt['cachelife']);
-	$myPicasaParser->updateOption('cachedir', $opt['cachedir']);
-	$myPicasaParser->updateOption('proxy', $opt['proxy']);
-	$myPicasaParser->updateOption('authkey', $opt['authkey']);
+	$myPicasaParser->updateOption('startimg', $o['startimg']);
+	$myPicasaParser->updateOption('tag', $o['tag']);
+	$myPicasaParser->updateOption('user', $o['user'], false);
+	$myPicasaParser->updateOption('thumbsize', $o['thumbsize'], false);
+	$myPicasaParser->updateOption('imagesize', $o['imagesize'], false);
+	$myPicasaParser->updateOption('maxresults', $o['maxresults'], false);
+	$myPicasaParser->updateOption('urlbase', $o['urlbase']);
+	$myPicasaParser->updateOption('cachelife', $o['cachelife']);
+	$myPicasaParser->updateOption('cachedir', $o['cachedir']);
+	$myPicasaParser->updateOption('proxy', $o['proxy']);
+	$myPicasaParser->updateOption('authkey', $o['authkey']);
 
 	// parse out the HTML outter and inner wrappers "ul > li" or "div > div", etc
-	$wrapper = explode('>', html_entity_decode($opt['wrapper']));
+	$wrapper = explode('>', html_entity_decode($o['wrapper']));
 	$wrapper[0]=trim($wrapper[0]);
 	$wrapper[1]=trim($wrapper[ (empty($wrapper[1]) ? 0 : 1) ]);
 
 	// holds the album/image sequencing; used to allow randomizing. Format: $seqA[n]='album#:image#'
 	$seqA = Array();
-	$albums = explode(',', $opt['album']);
+	$albums = explode(',', $o['album']);
 	$text='';
-	// displaying one or more album covers: either $opt['display'] is 'cover' or no album specified
-	$displayCover = $opt['mode']=='cover' || empty($opt['album']);
-	$linkDirect = $opt['mode']=='linkdirect';
+	// displaying one or more album covers: either $o['display'] is 'cover' or no album specified
+	$displayCover = $o['mode']=='cover' || empty($o['album']);
+	$linkDirect = $o['mode']=='linkdirect';
 
 	// handle procesing of more than one album, ie, (:pmGallery album=album1,album2 :)
 	for ($albumN=0; ($displayCover && $albumN==0) || (!$displayCover && $albumN<count($albums)); $albumN++) {
@@ -156,8 +155,8 @@ function pmGallery($args) {
 		genArray($seqA, $albumN, count($albumsA[$albumN]['main']));
 	}
 
-	$seqN = (empty($opt['random']) || $opt['random']>count($seqA) ? count($seqA) : $opt['random']);
-	if (!empty($opt['random']) && $seqN>1) {
+	$seqN = (empty($o['random']) || $o['random']>count($seqA) ? count($seqA) : $o['random']);
+	if (!empty($o['random']) && $seqN>1) {
 		randomizeArray ($seqA, $seqN);
 	}
 	
@@ -180,13 +179,13 @@ function pmGallery($args) {
 					$GLOBALS['pagename'],
 					($linkDirect 
 						? $image['largeSrc']
-						: (preg_match('!(\.|\/)!', $opt['wikitarget']) ? $opt['wikitarget'] : $image_title[0])
+						: (preg_match('!(\.|\/)!', $o['wikitarget']) ? $o['wikitarget'] : $image_title[0])
 					), //target
 					'<img src="'. $image['thumbSrc']. '" '.
 						// unable to find h/w for album cover images
 						($displayCover ? ''
-							: 'height="'. (empty($opt['height']) ? $entry['thumbnail_h'] : $opt['height']). '"'.
-							  'width="'. (empty($opt['width']) ? $entry['thumbnail_w'] : $opt['width']). '"'
+							: 'height="'. (empty($o['height']) ? $entry['thumbnail_h'] : $o['height']). '"'.
+							  'width="'. (empty($o['width']) ? $entry['thumbnail_w'] : $o['width']). '"'
 						).
 						' />',	//link text
 					'',		//suffix
