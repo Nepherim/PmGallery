@@ -44,8 +44,8 @@
 
         include_once("$FarmD/cookbook/pmgallery.php");
 */
-$RecipeInfo['pmGallery']['Version'] = '0.1.3';
-$RecipeInfo['pmGallery']['Date'] = '2008-07-19';
+$RecipeInfo['pmGallery']['Version'] = '0.1.4';
+$RecipeInfo['pmGallery']['Date'] = '2008-07-29';
 
 /**
 * Code executed on include
@@ -98,7 +98,7 @@ function pmGallery($args) {
 		'thumbsize'		=> '', 				// default is 72: 32, 48, 64, 72, 144, 160,200, 288, 320, 400, 512, 576, 640, 720, 800
 		'imagesize'		=> '', 				// defult is 640: 32, 48, 64, 72, 144, 160,200, 288, 320, 400, 512, 576, 640, 720, 800
 		'maxresults'   => '', 				// default is 50: numeric (max # images/albums)
-		'wrapper'		=> 'div',			// default is 'div': '>' separated format for outter and inner html tags: 'ul > li', 'div > div' (or 'div'), etc
+		'wrapper'		=> 'ul &gt; li',			// default is 'div': '>' separated format for outter and inner html tags: 'ul > li', 'div > div' (or 'div'), etc
 		'mode'			=> '',				// 'cover': shows the cover of the single album specified; 
 													// 'linkdirect': links direct to source image (used with external pugins)
 		'provider'		=> 'picasa',		// where the images are coming from (picasa)
@@ -137,7 +137,8 @@ function pmGallery($args) {
 	$myPicasaParser->updateOption('authkey', $o['authkey']);
 
 	// parse out the HTML outter and inner wrappers "ul > li" or "div > div", etc
-	$wrapper = explode('>', html_entity_decode($o['wrapper']));
+	// NB: html_entity_decode doesn't replace &gt; under RTF8
+	$wrapper = explode('>', preg_replace('!&gt;!','>',$o['wrapper']));
 	$wrapper[0]=trim($wrapper[0]);
 	$wrapper[1]=trim($wrapper[ (empty($wrapper[1]) ? 0 : 1) ]);
 
