@@ -43,6 +43,7 @@ class picasaAPI{
 	/**
 	* method creates a valid url to access a users Albumlist
 	* $album can either be the album name or the album ID as returned by the API (set $isID=true).
+	* http://picasaweb.google.com/data/feed/api/user/nepherim?kind=photo&max-results=50&thumbsize=72&tag=unphotographed,moon
 	*/
 	public function createFeedUrl($album,$isID){
 		if(!empty($this->options['user'])){
@@ -53,7 +54,7 @@ class picasaAPI{
 			}
 			$feedUrl = $this->getPicasaurlbase(). $feedUrl.
 				(empty($this->options['maxresults'])?'':'&max-results='.$this->options['maxresults']).
-				(empty($this->options['starting'])?'':'&start-index='.$this->options['starting']).
+				'&start-index=' .(empty($this->options['starting'])?1:$this->options['starting']).
 				(empty($this->options['thumbsize'])?'':'&thumbsize='.$this->options['thumbsize']).
 				(empty($this->options['authkey'])?'':'&authkey='.$this->options['authkey']).
 				(empty($this->options['tag'])?'':'&tag='.$this->options['tag']);
@@ -127,30 +128,34 @@ class picasaAPI{
 			//Media namespace data
 			$ns_media=$item->children($namespace['media']);
 			$feed_arr['entry'][$i]['id'] = (string)$ns_gphoto->id;
-
-			$thumb_attr = $ns_media->group->thumbnail->attributes();
-			$con_attr = $ns_media->group->content->attributes();
 			$feed_arr['entry'][$i]['title'] = (string)$ns_media->group->title;
 			$feed_arr['entry'][$i]['description'] = (string)$ns_media->group->description;
-			$feed_arr['entry'][$i]['keywords'] = (string)$ns_media->group->description;
+			$feed_arr['entry'][$i]['keywords'] = (string)$ns_media->group->keywords;
+
+			$thumb_attr = $ns_media->group->thumbnail->attributes();
 			$feed_arr['entry'][$i]['thumbnail_w'] = (int)$thumb_attr['width'];
 			$feed_arr['entry'][$i]['thumbnail_h'] = (int)$thumb_attr['height'];
+
+			$con_attr = $ns_media->group->content->attributes();
 			$feed_arr['entry'][$i]['url'] = (string)$con_attr['url'];
 			$feed_arr['entry'][$i]['width'] = (string)$con_attr['width'];
 			$feed_arr['entry'][$i]['height'] = (string)$con_attr['height'];
 			$feed_arr['entry'][$i]['type'] = (string)$con_attr['type'];
 
 			//Exif namespace data
-			$exif=$item->children($namespace['exif']);
-			$feed_arr['exif'][$i]['timestamp'] = (string)$exif->tags->time;
-			$feed_arr['exif'][$i]['fstop'] = (string)$exif->tags->fstop;
-			$feed_arr['exif'][$i]['make'] = (string)$exif->tags->make;
-			$feed_arr['exif'][$i]['model'] = (string)$exif->tags->model;
-			$feed_arr['exif'][$i]['exposure'] = (string)$exif->tags->exposure;
-			$feed_arr['exif'][$i]['flash'] = (string)$exif->tags->flash;
-			$feed_arr['exif'][$i]['iso'] = (string)$exif->tags->iso;
-			$feed_arr['exif'][$i]['time'] = (string)$exif->tags->time;
-			$feed_arr['exif'][$i]['imageUniqueID'] = (string)$exif->tags->imageUniqueID;
+			$exif=$item->children($namespace['exif'])->tags;
+			$feed_arr['exif'][$i]['distance'] = (string)$exif->distance;
+			$feed_arr['exif'][$i]['exposure'] = (string)$exif->exposure;  //"1/" + (int)(1 / value + 0.5);
+			$feed_arr['exif'][$i]['flash'] = (string)$exif->flash;
+			$feed_arr['exif'][$i]['focallength'] = (string)$exif->focallength;
+			$feed_arr['exif'][$i]['fstop'] = (string)$exif->fstop;
+			$feed_arr['exif'][$i]['imageUniqueID'] = (string)$exif->imageUniqueID;
+			$feed_arr['exif'][$i]['iso'] = (string)$exif->iso;
+			$feed_arr['exif'][$i]['make'] = (string)$exif->make;
+			$feed_arr['exif'][$i]['model'] = (string)$exif->model;
+			$feed_arr['exif'][$i]['tags'] = (string)$exif->tags;
+			$feed_arr['exif'][$i]['timestamp'] = (string)$exif->time;
+
 			$feed_arr['main'][$i]['thumbSrc'] = $this->getThumbnailUrl($feed_arr['entry'][$i]['url'], $this->options['thumbsize']);
 			$feed_arr['main'][$i]['largeSrc'] = $this->getThumbnailUrl($feed_arr['entry'][$i]['url'], $this->options['imagesize']);
 

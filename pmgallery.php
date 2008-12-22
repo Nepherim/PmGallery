@@ -27,7 +27,7 @@
 		'imagesize'		=> '', 				// defult is 640: 32, 48, 64, 72, 144, 160,200, 288, 320, 400, 512, 576, 640, 720, 800
 		'maxresults'   => '', 				// default is 50: numeric (max # images/albums)
 		'wrapper'		=> 'div',			// default is 'div': '>' separated format for outter and inner html tags: 'ul > li', 'div > div' (or 'div'), etc
-		'mode'			=> '',				// 'cover': shows the cover of the single album specified; 
+		'mode'			=> '',				// 'cover': shows the cover of the single album specified;
 													// 'linkdirect': links direct to source image (used with external pugins)
 		'provider'		=> 'picasa',		// where the images are coming from (picasa)
 
@@ -99,9 +99,10 @@ function pmGallery($args) {
 		'imagesize'		=> '', 				// defult is 640: 32, 48, 64, 72, 144, 160,200, 288, 320, 400, 512, 576, 640, 720, 800
 		'maxresults'   => '', 				// default is 50: numeric (max # images/albums)
 		'wrapper'		=> 'ul &gt; li',			// default is 'div': '>' separated format for outter and inner html tags: 'ul > li', 'div > div' (or 'div'), etc
-		'mode'			=> '',				// 'cover': shows the cover of the single album specified; 
+		'mode'			=> '',				// 'cover': shows the cover of the single album specified;
 													// 'linkdirect': links direct to source image (used with external pugins)
 		'provider'		=> 'picasa',		// where the images are coming from (picasa)
+		'exif'			=> false,			// include the exif data as part of the anchor title attribute
 
 		// These parameters are usually set globally in config.php
 		'urlbase'		=> 'com',			// default is 'com': source of the rss feed
@@ -112,7 +113,8 @@ function pmGallery($args) {
 		'cachelife' 	=> '7200'			// default is '7200' (2 hours): set to '0' to disable the cache
 	);
 	$o = array_merge($o, $GLOBALS['pmGallery']);
-	$o = array_merge($o, ParseArgs($args));
+	// Allows the markup to be used in an (:include user="{$$user}":) where {$$user} might be blank, and thus passed to this routine as {$$user}.
+	$o = array_merge($o, preg_grep('/\{\$\$.*\}/', ParseArgs($args), PREG_GREP_INVERT));
 	$o = array_merge($o, $_GET);
 
 	$o['wikitarget'] = (empty($o['wikitarget']) ? $GLOBALS['pmGroup'] : $o['wikitarget']);
@@ -160,7 +162,7 @@ function pmGallery($args) {
 	if (!empty($o['random']) && $seqN>1) {
 		randomizeArray ($seqA, $seqN);
 	}
-	
+
 	// loop through the sequential album/image or the randomized album/images
 	for ($i=0; $i<$seqN; $i++) {
 		$x = explode(':', $seqA[$i]);
@@ -169,6 +171,7 @@ function pmGallery($args) {
 		$image = $albumsA[$albumN]['main'][$imageN];
 		$entry = $albumsA[$albumN]['entry'][$imageN];
 		$gphoto = $albumsA[$albumN]['gphoto'][$imageN];
+		$exif = $albumsA[$albumN]['exif'][$imageN];
 
 		//remove filename extension, otherwise PmWiki thinks it's a group.pagename format
 		$image_title = explode('.',$image['title']);
@@ -178,7 +181,7 @@ function pmGallery($args) {
 				'<'. $wrapper[1]. '>'.
 				MakeLink(
 					$GLOBALS['pagename'],
-					($linkDirect 
+					($linkDirect
 						? $image['largeSrc']
 						: (preg_match('!(\.|\/)!', $o['wikitarget']) ? $o['wikitarget'] : $image_title[0])
 					), //target
@@ -200,7 +203,11 @@ function pmGallery($args) {
 									)
 							).
 						"' ".
-						(empty($entry['description'])	? '' : 'title="'. htmlentities($entry['description']). '"').
+						(empty($entry['description'])
+							? ''
+							: 'title="'. htmlentities($entry['description'])
+//								. (empty($o['exif']) ? '' : 'EXP: ' .$exif['exposure'])
+								. '"').
 						">\$LinkText".
 					'</a>'
 				).
@@ -243,7 +250,7 @@ function randomizeArray (&$arr, $n) {
 }
 
 /**
-* Returns a randomize array of $n elements based on $arr
+*
 */
 function debugLog ($msg, $out=false) {
 	if ($out || (!$out && $GLOBALS['pmGallery']['debug']) ) {
