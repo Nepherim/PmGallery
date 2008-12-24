@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2008 David Gilbert ( http://solidgone.org/pmGallery )
+/*  Copyright 2008 David Gilbert ( http://solidgone.org/lightweight-php-picasa-api )
     You can redistribute this file and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or

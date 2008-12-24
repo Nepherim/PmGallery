@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2008 David Gilbert ( http://solidgone.org/pmGallery )
+/*  Copyright 2008 David Gilbert ( http://solidgone.org/lightweight-php-picasa-api )
     You can redistribute this file and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -18,6 +18,7 @@ class picasaAPI{
 		'maxresults' => '50',
 		'starting' => '',
 		'tag' => '',
+		'query' => '',							//Query string (for Picasa, set to "" to order descending by date, like an RSS feed)
 		'urlbase' => 'com',					//base domain name (com,fr,de...)
 		'cachedir' => '',						//location of the cache directory. Default is [directory of this file].'/cache'. NO trailing /
 		'cachelife' => '7200'
@@ -47,7 +48,7 @@ class picasaAPI{
 	*/
 	public function createFeedUrl($album,$isID){
 		if(!empty($this->options['user'])){
-			if ( empty($album) && empty($this->options['tag']) ) {
+			if ( empty($album) && empty($this->options['tag']) && empty($this->options['query']) ) {
 				$feedUrl = '?kind=album';
 			} else {
 				$feedUrl = (empty($album)	? '' : '/album'. (isset($isID) && $isID ? 'id' : ''). '/'. $album). '?kind=photo';
@@ -57,16 +58,11 @@ class picasaAPI{
 				'&start-index=' .(empty($this->options['starting'])?1:$this->options['starting']).
 				(empty($this->options['thumbsize'])?'':'&thumbsize='.$this->options['thumbsize']).
 				(empty($this->options['authkey'])?'':'&authkey='.$this->options['authkey']).
+				'&q='.$this->options['query'].
 				(empty($this->options['tag'])?'':'&tag='.$this->options['tag']);
 			return $feedUrl;
 		}
 		return false;
-	}
-	/**
-	* method creates a valid url to access a users Fotolist
-	*/
-	public function createPhotoFeedUrl(){
-		return (empty($this->options['user']) ? false : $this->getPicasaurlbase().'?kind=photo');
 	}
 
 	/**
@@ -87,12 +83,17 @@ class picasaAPI{
 	public function parseFeed($location) {
 
 		require_once('feeder.php');
+		$feed_arr = array(); //Array that contains all loaded and parsed Data
 		$feedXml = readFeed($location, $this->options['cachelife'], $this->options['cachedir'], $this->options['proxy']);
+
+		if (empty($feedXml)) {
+			debugLog('pmGallery Error: Unable to retrieve feed (' .$location .')', true);
+			return $feed_arr;
+		}
 
 		// parse the RSS Feed -- needs PHP5
 		$feed = simplexml_load_string($feedXml);
 		$namespace = $feed->getDocNamespaces();
-		$feed_arr = array(); //Array that contains all loaded and parsed Data
 
 		//Main user information
 		$feed_arr['user']['name'] = (string)$feed->author->name;

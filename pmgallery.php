@@ -20,6 +20,7 @@
 		'width'			=> '',				// override for image display; usually set in CSS
 		'height'			=> '',				// override for image display; usually set in CSS
 		'imageurl'		=> '',				// Usually set automatically, and does not need to be set by user
+		'query'			=> '',				// Query string (for Picasa, set to "" to order descending by date, like an RSS feed)
 
 		// These parameters may also be set globally in config.php
 		'user'			=> '',
@@ -92,13 +93,14 @@ function pmGallery($args) {
 		'width'			=> '',				// override for image display; usually set in CSS
 		'height'			=> '',				// override for image display; usually set in CSS
 		'imageurl'		=> '',				// Usually set automatically, and does not need to be set by user
+		'query'			=> '',				// Query string (for Picasa, set to "" to order descending by date, like an RSS feed)
 
 		// These parameters may also be set globally in config.php
 		'user'			=> '',
 		'thumbsize'		=> '', 				// default is 72: 32, 48, 64, 72, 144, 160,200, 288, 320, 400, 512, 576, 640, 720, 800
 		'imagesize'		=> '', 				// defult is 640: 32, 48, 64, 72, 144, 160,200, 288, 320, 400, 512, 576, 640, 720, 800
 		'maxresults'   => '', 				// default is 50: numeric (max # images/albums)
-		'wrapper'		=> 'ul &gt; li',			// default is 'div': '>' separated format for outter and inner html tags: 'ul > li', 'div > div' (or 'div'), etc
+		'wrapper'		=> 'ul &gt; li',	// default is 'div': '>' separated format for outter and inner html tags: 'ul > li', 'div > div' (or 'div'), etc
 		'mode'			=> '',				// 'cover': shows the cover of the single album specified;
 													// 'linkdirect': links direct to source image (used with external pugins)
 		'provider'		=> 'picasa',		// where the images are coming from (picasa)
@@ -116,7 +118,6 @@ function pmGallery($args) {
 	// Allows the markup to be used in an (:include user="{$$user}":) where {$$user} might be blank, and thus passed to this routine as {$$user}.
 	$o = array_merge($o, preg_grep('/\{\$\$.*\}/', ParseArgs($args), PREG_GREP_INVERT));
 	$o = array_merge($o, $_GET);
-
 	$o['wikitarget'] = (empty($o['wikitarget']) ? $GLOBALS['pmGroup'] : $o['wikitarget']);
 
 	// if the image url supplied, then show the image
@@ -128,6 +129,7 @@ function pmGallery($args) {
 	$myPicasaParser = new picasaAPI();
 	$myPicasaParser->updateOption('startimg', $o['startimg']);
 	$myPicasaParser->updateOption('tag', $o['tag']);
+	$myPicasaParser->updateOption('query', $o['query']);
 	$myPicasaParser->updateOption('user', $o['user'], false);
 	$myPicasaParser->updateOption('thumbsize', $o['thumbsize'], false);
 	$myPicasaParser->updateOption('imagesize', $o['imagesize'], false);
