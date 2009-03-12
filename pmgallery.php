@@ -155,13 +155,13 @@ function pmGallery($args) {
 	$linkDirect = $o['mode']=='linkdirect';
 
 	// handle procesing of more than one album, ie, (:pmGallery album=album1,album2 :)
-	for ($albumN=0; ($displayCover && $albumN==0) || (!$displayCover && $albumN<count($albums)); $albumN++) {
+	for ($albumN=0; ($displayCover && $albumN==0) || (!$displayCover && $albumN<count($albums)) || (count($albums)==0); $albumN++) {
 		$albumsA[$albumN] = $myPicasaParser->parseFeed( $myPicasaParser->createFeedUrl(($displayCover ? '' : $albums[$albumN]), false) );
 		genArray($seqA, $albumN, count($albumsA[$albumN]['main']));
 	}
 
 	$seqN = (empty($o['random']) || $o['random']>count($seqA) ? count($seqA) : $o['random']);
-	if (!empty($o['random']) && $seqN>1) {
+	if (!empty($o['random'])) {
 		randomizeArray ($seqA, $seqN);
 	}
 
@@ -243,7 +243,7 @@ function genArray (&$arr, $prefix, $n) {
 */
 function randomizeArray (&$arr, $n) {
 	srand((float) microtime() * 10000000);
-	$rand_keys = array_rand($arr, $n);
+	$rand_keys = (array)array_rand($arr, $n);
 	shuffle($rand_keys);
 	for ($i=0; $i<$n; $i++){
 		$seqA_new[] = $arr[$rand_keys[$i]];
