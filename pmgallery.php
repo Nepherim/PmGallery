@@ -45,8 +45,8 @@
 
         include_once("$FarmD/cookbook/pmgallery.php");
 */
-$RecipeInfo['pmGallery']['Version'] = '0.1.4';
-$RecipeInfo['pmGallery']['Date'] = '2008-07-29';
+$RecipeInfo['pmGallery']['Version'] = '0.3.1';
+$RecipeInfo['pmGallery']['Date'] = '2009-07-01';
 
 /**
 * Code executed on include
