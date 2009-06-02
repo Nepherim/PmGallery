@@ -1,0 +1,242 @@
+(:include DaveG.Styles:)
+(:title pmGallery:)
+>>recipeinfo bluebox<<
+Summary: Display your Picasa albums and pictures within PmWiki.
+Version: Beta -- 0.1.3 (19-Jul-2008)
+Prerequisites: '''PHP5'''
+Maintainer: [[~DaveG]]
+Categories: [[!Images]], [[!Gallery]], [[!Picasa]], [[!Flickr]]
+Discussion: [[{$Name}-Talk]]
+Download: [[(Attach:)pmgallery.zip]]
+>><<
+
+!! Summary [[#intro]]%h2%
+pmGallery can be used to display albums, thumbnails, and images direct from image stores like Picasa (Flickr coming soon), inside PmWiki pages. No images or thumbnails are stored locally, so there apart from uploading to Picasa there's no extra work involved in displaying your images within your wiki.
+
+(:div style="padding:.4em; border:1px solid red; background-color: #f8f8f8; overflow: auto;":)
+'''17-Jul-08''': This cookbook is Beta. Using it will not cause any loss of data, but there may be bugs, and things may not work quite right. See the [[#buglist|bug list]] for all known problems. If you do find anything odd please let me know on the [[{$Name}-Talk|discussion page]].\\
+'''19-Jul-08''': pmGallery '''requires PHP5'''. If you're using PHP4 you will see errors, not images.
+(:divend:)
+
+!!! Table of contents %h3%
+(:div style="font-size:.85em; padding:0;":)
+* [[#description|Description]] | [[#features|Features]] | [[#demo|Demo]] | [[#seenat|Being used at...]]
+* [[#installation|Installation]] | [[#options|Options]] | [[#parameters|Parameters]] | [[#examples|Examples]] | [[#style|Styling]]
+* [[#notes|Notes]] | [[#buglist|Bug List]] | [[#changelog|Change Log]]
+* [[#comments|Comments]] | [[#seealso|See Also]]
+(:divend:)
+
+!! Description [[#description]]%h2%
+(:Description Uses a PmWiki markup to embed Picasa albums and images on a PmWiki page. Provides integration with [[Cookbook/Galleria]].:){$Description}
+
+!!! Features [[#features]]%h3%
+* Display album covers clickable to the images within the album
+* Display thumbnail images, clickable to larger images
+* Display the contents of one or more albums on a single wiki page
+* Can automatically create 'virtual' wiki pages. This means you can display an entire album, and it's images with a single [@(:pmgallery:)@] directive!
+* Display random images from one or more albums
+* Automatic caching of feed files -- images are never stored locally, always retrieved from Picasa/Flickr
+* Display images from public and private albums
+* Make full use of your Picasa/Flickr tags
+* Full integration with [[Galleria]], means stylish image presentation!
+* Future: display additional data, like Exif, comments, etc.
+
+!! Demo [[#demo]]%h3%
+Basic demo is over at [[http://wiki.solidgone.org/PmGallery | solidgone.org]]. Demo will be added here when things stablize.
+
+!! Being used at...[[#seenat]]%h2%
+If you're using pmGallery, feel free to add your site to this list. Let others see what pmGallery can do!
+
+!! Installation [[#installation]]%h2%
+To install:
+* Extract the files and directories in [[(Attach:)pmgallery.zip]] into your cookbook directory. Everything should be inside a folder [@cookbook/pmgallery@].
+  After extracting the files you should have:
+>>box<<
+[@
+   cookbook/pmgallery/
+      |- pmgallery.php
+      |- feeder.php
+      |- picasa.php5
+      |
+      |- /wikilib.d/
+      |      |- pmGallery.GroupFooter
+      |
+      |- /cache/
+             |- <empty>     
+@]
+>><<
+* Add these lines to your [@config.php@]:
+** changing "+VirtualGroup1" to the name of the PmWiki group in which your album will be placed. This is the same group as the page containing your [@(:pmgallery:)@] markup directive. Do not remove the "+" sign -- it's used to ensure [[#autocreate|automatic creation of a group footer]].
+** changing "nickname" to your [[#nickname|Picasa nickname]]
+>>box<<
+[@
+$pmGallery['virtualgroups'] = array('+VirtualGroup1');
+$pmGallery['user'] = 'nickname';
+include_once("$FarmD/cookbook/pmgallery/pmgallery.php");@]
+>><<
+
+!! Options [[#options]]%h2%
+!!! Page not Found
+pmGallery makes heavy use of '[[#virtualpages|virtual pages]]', which do not really exist within the wiki. If you are making use of these virtual pages to display albums and images, then you'll need to prevent PmWiki from displaying the usual 'page not found' error message":
+>>box<<
+[@The page "Unphotographed.Quiddity" doesn't exist. (Create Unphotographed.Quiddity)@]
+>><<
+
+By pre-defining these 'virtual groups' pmGallery suppresses the 'page not found' message for all pages within that group. Other groups will still show the message as usual. Add this to your [@config.php@] before the [@include_once@] line:
+>>box<<
+[@$pmGallery['virtualgroups'] = array('VirtualGroup1','VirtualGroup2');@]
+>><<
+
+!!! Auto-Create GroupFooter [[#autocreate]]%h3%
+pmGallery will automatically create a [@Group.GroupFooter@] page for you if you include a "+" in front of the group name on the virtual path setting:
+>>box<<
+[@$pmGallery['virtualgroups'] = array('+VirtualGroup1','VirtualGroup2');@]
+>><<
+
+After the [@GroupFooter@] is created you can edit it, and change and format it as you require. The initial content of the [@GroupFooter@] is:
+>>box<<
+[@
+(:pmgallery:)
+(:div id="pmGallery_Image":)
+(:divend:)@]
+>><<
+
+The key [@(:pmgallery:)@] directive is there to actually generate the album or images. The "pmGallery_Image" DIV is there for [[#Galleria|Galleria integration]].
+
+!! Parameters [[#parameters]]%h2%
+All parameters below can either set parameters in your config.php, where you know they will apply site wide, or at each [@ (:pmgallery:)@] directive. Parameters supplied in [@config.php@] will be over-ridden if also supplied within the directive.
+
+The only parameter you really must set is [@user@]. But in order to enjoy the automatic generation of albums, you'll also need to either create [[#groupfooters]] or have pmGallery [[#autocreate|auto-generated]] them for you.
+
+* In order to set parameters in [@config.php@] use this format:
+>>box<<
+  [@ $pmGallery['parameter_name'] = 'value';@]
+>><<
+* In order to set parameters with the markup directive use this format -- note that quotes are optional, but '''must''' be used if the value contains spaces.
+>>box<<
+  [@ (:pmgallery parameter_name="value" :) @]
+>><<
+
+These parameters are typically used within the markup directive:
+* '''album''': The name of the album -- you can see this at the end of the URL on Picasa public albums. For example [@picasaweb.google.com/nepherim/NewYork2007@], the album name is [@NewYork2007@].
+  If album is supplied, then show images in the album; if album is blank then show a list of albums.
+  You can provide more than one album name, separated with a comma:
+>>box<<
+  [@(:pmgallery album="NewYork2007,Quiddity":)@]
+>><<
+
+* '''wikitarget''': Specifies the group or page to load images into when the user clicks.
+  Usually left blank, in which case the current group will be used, with the name of the image being used as the page name. 
+  Otherwise for albums specify the wiki group; for pages specify the [@group .page@].
+* '''tag''': Used to search for images with matching tags.
+* '''random''': Number of random images to include. If more than one [@album@] is provided, images will be selected randomly across albums.
+* '''startimg''': Specified the image to start displaying. Used if paging across many images, in conjunction with 'maxresults'.
+* '''width''': Override for image display; usually set in CSS rather than as a parameter.
+* '''height''': Override for image display; usually set in CSS rather than as a parameter.
+
+!!! Usually in markup directive %h3%
+These parameters usually set in [@config.php@], but may sometimes in the markup directive:
+* [[#nickname]]'''user: With Picasa this is the username or nickname that you login with, ie, "nepherim".'''
+* '''thumbsize''': Default is 72. Other options are: 32, 48, 64, 72, 144, 160,200, 288, 320, 400, 512, 576, 640, 720, 800
+* '''imagesize''': Default is 640. Other options are: 32, 48, 64, 72, 144, 160,200, 288, 320, 400, 512, 576, 640, 720, 800
+* '''maxresults''': Maximum number of images or albums to display on a single page. Default is 50.
+* '''wrapper''': A '>' separated string defining the format for outer and inner html tags. The outer tag surrounds all image/albums being displayed. The inner tag surrounds each image or album.
+  Default is 'div'.
+  Examples: 'ul > li', 'div > div', 'div', 'span', etc
+* '''mode''': Determines how pmGallery will operate.
+** 'cover': shows the cover of the album(s) specified.
+** 'linkdirect': links direct to source image, rather than embedding the image within a wiki page. Usually used with external plugins (like [[Galleria]] that need the full image URL to do their magic.
+* '''provider''': Where the images are coming from: "picasa". Default is "picasa"
+
+!!! Usually site-wide %h3%
+These parameters are usually set globally in [@config.php@]:
+* '''urlbase''': Country code of the source of the RSS feed, ie, "de", "fr", "co.uk", etc. Default is "com"
+* '''proxy''': specify the proxy and port ('proxy.server.com:8080')
+* '''authkey''': Used to display private albums and images. Each key is specific to the domain on which your wiki resides. You'll need to get either a Picasa API key, or a Flickr API key.
+  '''Not yet fully supported -- I'm not clear how Picasa manages authkeys.'''
+* '''cachedir''': Location of the cache directory. Default is [directory of this file].'/cache'. '''NO trailing /'''
+* '''cachelife''': Determines how long cache entries remain. Entries are automatically deleted after this period. Set to '0' to disable the cache. Default is '7200' (2 hours).
+
+!!! Not usually used %h3%
+These parameters are not typically set by the user:
+* '''debug''': Set to [@true@] (not quoted), to send debugging output to the web server log. Default is [@false@].
+* '''imageurl''': Usually set automatically, and does not need to be set by user.
+
+!! Examples [[#examples]]%h2%
+In all the examples below, you only need to provide the parameters within the markup if they are not already in [@config.php@], or if you want to override the values in [@config.php@].
+
+!!! Automatically generate virtual albums [[#virtualpages]]%h3%
+pmGallery can automatically generate a thumbnail list of clickable album covers, linking to clickable image thumbnails, and onto a large version of the image. You only need to include the markup directive on a single page. No other pages need to be created! Add this directive to any page, replacing 'nickname' with your actual nickname:
+>>box<<
+[@(:pmgallery user=nickname :)@]
+>><<
+
+And then either create [[#groupfooters]] or have pmGallery [[#autocreate|auto-generate]] the footer for you. Change "groupname" to the name of the PmWiki group in which you want to auto-generate the album:
+>>box<<
+[@$pmGallery['virtualgroups'] = array('+groupname1');@]
+>><<
+
+!!! Include images from multiple albums %h3%
+>>box<<
+[@(:pmgallery user=nickname albums="album1,album2" :)@]
+>><<
+
+!!! Include a random number of images from multiple albums %h3%
+>>box<<
+[@(:pmgallery user=nickname albums="album1,album2" random=5 :)@]
+>><<
+
+!!! Generate a numbered list albums %h3%
+>>box<<
+[@(:pmgallery user=nickname wrapper="ul>li" :)@]
+>><<
+
+!!! Present images in a different wiki group from albums %h3%
+Place the markup directive on a page in [@groupA@], and have the images appear on pages in group [@groupB@]:
+>>box<<
+[@(:pmgallery user=nickname wikitarget="groupB" :)@]
+>><<
+
+!!! Display large thumbnails %h3%
+>>box<<
+[@(:pmgallery user=nickname thumbsize=160 :)@]
+>><<
+
+!! Styling [[#style]]%h2%
+Coming later... (outer and inner classes)
+
+!! Notes [[#notes]]%h2%
+Cache empty
+Virtual pages: Auto creation of GroupFooter
+
+!!! Galleria [[#galleria]]%h3%
+The [[#autocreate|automatically generated]] [@GroupFooter@] includes a DIV used by [[Galleria]].
+>>box<<
+[@
+(:pmgallery:)
+(:div id="pmGallery_Image":)
+(:divend:)
+@]
+>><<
+
+!! Bugs and Suggestions [[#buglist]]%h2%
+* new: Provide Flickr support.
+* new: Use templates to provide advanced layout support.
+* new: Retrieve images by photoid, rather than using full url.
+* new: Allow exclusion of albums.
+
+!! Change log / Release notes [[#changelog]]%h2%
+!!! v0.1.3 (19-Jul-08) %h3%
+''Contributors: [[~DaveG]]''
+* bug: corrected url construct (first parameter had '&' not '?'
+
+!!! v0.1.0 (17-Jul-08) %h3%
+''Contributors: [[~DaveG]]''
+
+* First beta release.
+
+!! Comments [[#comments]]%h2%
+See Discussion at [[{$Name}-Talk]].
+
+!! See Also [[#seealso]]%h2%
+* [[Galleria]]: pmGallery provides full integration with the  Galleria image viewer.
