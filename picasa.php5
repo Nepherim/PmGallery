@@ -51,14 +51,14 @@ class picasaAPI{
 			if ( empty($album) && empty($this->options['tag']) && empty($this->options['query']) ) {
 				$feedUrl = '?kind=album';
 			} else {
-				$feedUrl = (empty($album)	? '' : '/album'. (isset($isID) && $isID ? 'id' : ''). '/'. $album). '?kind=photo';
+				$feedUrl = (empty($album)	? '' : '/album'. (isset($isID) && $isID ? 'id' : ''). '/'. $album). '?kind=photo'
+					.'&q='.$this->options['query'];
 			}
 			$feedUrl = $this->getPicasaurlbase(). $feedUrl.
 				(empty($this->options['maxresults'])?'':'&max-results='.$this->options['maxresults']).
 				'&start-index=' .(empty($this->options['starting'])?1:$this->options['starting']).
 				(empty($this->options['thumbsize'])?'':'&thumbsize='.$this->options['thumbsize']).
 				(empty($this->options['authkey'])?'':'&authkey='.$this->options['authkey']).
-				'&q='.$this->options['query'].
 				(empty($this->options['tag'])?'':'&tag='.$this->options['tag']);
 			return $feedUrl;
 		}
