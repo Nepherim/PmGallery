@@ -52,7 +52,8 @@ $RecipeInfo['pmGallery']['Date'] = '2009-07-01';
 * Code executed on include
 */
 Markup('pmgallery', 'inline', "/\\(:pmgallery\\s*(.*?):\\)/se", "Keep(pmGallery(PSS('$1')))");
-if (preg_match('!^(.*)(\.|/)!', $GLOBALS['pagename'], $m))  $pmGroup=$m[1];
+preg_match('!^(.*)(\.|/)!', $GLOBALS['pagename'], $m);
+$pmGroup=$m[1];
 
 // Specifying $pmGallery['virtualgroups'] allows us to prevent "Page not found..." error message showing up
 if (!empty($pmGallery['virtualgroups'])) {
