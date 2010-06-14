@@ -52,7 +52,7 @@ $RecipeInfo['pmGallery']['Date'] = '2009-07-01';
 * Code executed on include
 */
 Markup('pmgallery', 'inline', "/\\(:pmgallery\\s*(.*?):\\)/se", "Keep(pmGallery(PSS('$1')))");
-$pmGroup = PageVar($GLOBALS['pagename'], '$Group');
+if (preg_match('!^(.*)(\.|/)!', $GLOBALS['pagename'], $m))  $pmGroup=$m[1];
 
 // Specifying $pmGallery['virtualgroups'] allows us to prevent "Page not found..." error message showing up
 if (!empty($pmGallery['virtualgroups'])) {
@@ -116,7 +116,7 @@ function pmGallery($args) {
 	);
 	$o = array_merge($o, $GLOBALS['pmGallery']);
 	// Allows the markup to be used in an (:include user="{$$user}":) where {$$user} might be blank, and thus passed to this routine as {$$user}.
-	$o = array_merge($o, preg_grep('/\{\$\$.*\}/', ParseArgs($args), PREG_GREP_INVERT));
+	$o = array_merge($o, preg_grep('/(\{\$\$.*\}|^$)/', ParseArgs($args), PREG_GREP_INVERT));  #find all elements NOT like {$$user} or empty
 	$o = array_merge($o, $_GET);
 	$o['wikitarget'] = (empty($o['wikitarget']) ? $GLOBALS['pmGroup'] : $o['wikitarget']);
 
@@ -156,7 +156,7 @@ function pmGallery($args) {
 
 	// handle procesing of more than one album, ie, (:pmGallery album=album1,album2 :)
 	for ($albumN=0; ($displayCover && $albumN==0) || (!$displayCover && $albumN<count($albums)) || (count($albums)==0); $albumN++) {
-		$albumsA[$albumN] = $myPicasaParser->parseFeed( $myPicasaParser->createFeedUrl(($displayCover ? '' : $albums[$albumN]), false) );
+		$albumsA[$albumN] = $myPicasaParser->parseFeed( $myPicasaParser->createFeedUrl(($displayCover ?'' :$albums[$albumN]), false) );
 		genArray($seqA, $albumN, count($albumsA[$albumN]['main']));
 	}
 

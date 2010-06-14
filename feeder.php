@@ -30,8 +30,8 @@ function readFeed ($location, $cacheLife, $cacheDir, $proxy) {
 	cleanDir($cacheDir, $cachePrefix.'*', $cacheLife);
 
 	//First check for an existing version of the time, and then check to see whether or not it's expired.
-	if(!empty($cacheLife) && file_exists($cache) && filemtime($cache) > (time() - $cacheLife)) {
-		debugLog('cached...');
+	if(!empty($cacheLife) && file_exists($cache) && filesize($cache)>0 && filemtime($cache) > (time() - $cacheLife)) {
+		debugLog('cached...: '.$cache);
 		//If there's a valid cache file, load its data.
 		$feedXml = file_get_contents($cache);
 	} else {
@@ -48,6 +48,7 @@ function readFeed ($location, $cacheLife, $cacheDir, $proxy) {
 				  )
 			 )
 		);
+		debugLog('Location: '.$location);
 		$feedXml = file_get_contents($location, false, $ctx);
 		$tempName = tempnam($cacheDir,'t_'.$cachePrefix);	// prefix with t_ to prevent other processes deleting
 		file_put_contents($tempName, $feedXml);

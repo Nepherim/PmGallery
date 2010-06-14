@@ -47,6 +47,7 @@ class picasaAPI{
 	* http://picasaweb.google.com/data/feed/api/user/nepherim?kind=photo&max-results=50&thumbsize=72&tag=unphotographed,moon
 	*/
 	public function createFeedUrl($album,$isID){
+		debugLog('Album: '.$album.' |isID: '.$isID.' |User: '.$this->options['user']);
 		if(!empty($this->options['user'])){
 			if ( empty($album) && empty($this->options['tag']) && empty($this->options['query']) ) {
 				$feedUrl = '?kind=album';
@@ -60,6 +61,7 @@ class picasaAPI{
 				(empty($this->options['thumbsize'])?'':'&thumbsize='.$this->options['thumbsize']).
 				(empty($this->options['authkey'])?'':'&authkey='.$this->options['authkey']).
 				(empty($this->options['tag'])?'':'&tag='.$this->options['tag']);
+			debugLog('feedUrl: '.$feedUrl);
 			return $feedUrl;
 		}
 		return false;
@@ -86,6 +88,7 @@ class picasaAPI{
 		$feed_arr = array(); //Array that contains all loaded and parsed Data
 		$feedXml = readFeed($location, $this->options['cachelife'], $this->options['cachedir'], $this->options['proxy']);
 
+		debugLog('Feed (' .$location .')');
 		if (empty($feedXml)) {
 			debugLog('pmGallery Error: Unable to retrieve feed (' .$location .')', true);
 			return $feed_arr;
