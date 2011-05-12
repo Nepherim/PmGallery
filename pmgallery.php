@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2008 David Gilbert ( http://solidgone.org/pmGallery )
+/*  Copyright 2011 David Gilbert ( http://solidgone.org/pmGallery )
     You can redistribute this file and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -45,8 +45,8 @@
 
         include_once("$FarmD/cookbook/pmgallery.php");
 */
-$RecipeInfo['pmGallery']['Version'] = '0.3.1';
-$RecipeInfo['pmGallery']['Date'] = '2009-07-01';
+$RecipeInfo['pmGallery']['Version'] = '0.3.2';
+$RecipeInfo['pmGallery']['Date'] = '2011-05-12';
 
 /**
 * Code executed on include
