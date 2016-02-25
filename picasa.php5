@@ -1,9 +1,6 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2008 David Gilbert ( http://solidgone.org/lightweight-php-picasa-api )
-    You can redistribute this file and/or modify
-    it under the terms of the GNU General Public License as published
-    by the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+/* Copyright (c)2016 David Gilbert ( http://solidgone.org/lightweight-php-picasa-api ).
+ * This work is licensed under a Creative Commons Attribution-Share Alike 4.0 International License. http://creativecommons.org/licenses/by-sa/4.0/
  *
  * based on: http://www.ebugz.de/picasa-api-and-php/
  * Class evaluates Google Picasa Atom feeds and transforms it to usable PHP
@@ -52,8 +49,8 @@ class picasaAPI{
 			if ( empty($album) && empty($this->options['tag']) && empty($this->options['query']) ) {
 				$feedUrl = '?kind=album';
 			} else {
-				$feedUrl = (empty($album)	? '' : '/album'. (isset($isID) && $isID ? 'id' : ''). '/'. $album). '?kind=photo'
-					.'&q='.$this->options['query'];
+				$feedUrl = (empty($album)	? '' : '/album'. (isset($isID) && $isID ? 'id' : ''). '/'. $album). '?kind=photo';
+				$feedUrl .= (empty($this->options['query']) ?'' :'&q='.$this->options['query']);
 			}
 			$feedUrl = $this->getPicasaurlbase(). $feedUrl.
 				(empty($this->options['maxresults'])?'':'&max-results='.$this->options['maxresults']).

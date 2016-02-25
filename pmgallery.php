@@ -1,9 +1,6 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2011 David Gilbert ( http://solidgone.org/pmGallery )
-    You can redistribute this file and/or modify
-    it under the terms of the GNU General Public License as published
-    by the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+/* Copyright (c)2016 David Gilbert ( http://solidgone.org/pmGallery ).
+ * This work is licensed under a Creative Commons Attribution-Share Alike 4.0 International License. http://creativecommons.org/licenses/by-sa/4.0/
 
 	Shows the clickable album covers for all public albums of user XXXX
     	(:pmgallery user=XXXX :)
@@ -45,13 +42,13 @@
 
         include_once("$FarmD/cookbook/pmgallery.php");
 */
-$RecipeInfo['pmGallery']['Version'] = '0.3.2';
-$RecipeInfo['pmGallery']['Date'] = '2011-05-12';
+$RecipeInfo['pmGallery']['Version'] = '0.3.3';
+$RecipeInfo['pmGallery']['Date'] = '2016-02-25';
 
 /**
 * Code executed on include
 */
-Markup('pmgallery', 'inline', "/\\(:pmgallery\\s*(.*?):\\)/se", "Keep(pmGallery(PSS('$1')))");
+Markup_e('pmgallery', 'inline', "/\\(:pmgallery\\s*(.*?):\\)/s", "Keep(pmGallery(\$m[1]))");
 preg_match('!^(.*)(\.|/)!', $GLOBALS['pagename'], $m);
 $pmGroup=$m[1];
 
